@@ -1,0 +1,157 @@
+package org.creditbook.project.ui.transactions
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import org.creditbook.project.model.Customer
+import org.creditbook.project.ui.customers.CustomerHeaderContent
+
+@Composable
+fun AddPaymentContent(
+    state: AddPaymentUiState,
+    onAmountChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onPaymentMethodChange: (PaymentMethodOption) -> Unit,
+    onPayFull: () -> Unit,
+    onSubmit: () -> Unit,
+    onCancel: () -> Unit,
+    customer: Customer?
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (state.isOffline) {
+            // En-tête customer
+            CustomerHeaderContent(customer)
+        } else if (!state.isLoadingCustomer) {
+            // En-tête customer
+            CustomerHeaderContent(state.customer)
+        } else {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            }
+        }
+
+
+        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            if (state.showOfflineBalanceWarning) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                    Text(
+                        "Solde non disponible hors-ligne. Vous pouvez saisir un montant manuellement, mais vérifiez le solde une fois reconnecté.",
+                        modifier = Modifier.padding(12.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            OutlinedTextField(
+                value = state.amountText,
+                onValueChange = onAmountChange,
+                label = { Text("Montant reçu (€)") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                isError = state.error != null,
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (state.currentBalance != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(
+                        onClick = onPayFull,
+                        modifier = Modifier.weight(1f)
+                    ) { Text("Tout payer") }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text("Moyen de paiement", style = MaterialTheme.typography.labelMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = state.paymentMethod == PaymentMethodOption.CASH,
+                    onClick = { onPaymentMethodChange(PaymentMethodOption.CASH) },
+                    label = { Text("Espèces") },
+                    modifier = Modifier.weight(1f)
+                )
+                FilterChip(
+                    selected = state.paymentMethod == PaymentMethodOption.CARD,
+                    onClick = { onPaymentMethodChange(PaymentMethodOption.CARD) },
+                    label = { Text("Carte") },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = state.description,
+                onValueChange = onDescriptionChange,
+                label = { Text("Description (optionnel)") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (state.willFullySettleDebt) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+                    Text(
+                        "Ardoise soldée après ce paiement",
+                        modifier = Modifier.padding(12.dp),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+
+            state.error?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    it,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = onSubmit,
+                enabled = state.isAmountValid && !state.isSubmitting,
+                modifier = Modifier.fillMaxWidth().height(48.dp)
+            ) {
+                if (state.isSubmitting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Confirmer")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            OutlinedButton(
+                onClick = onCancel,
+                modifier = Modifier.fillMaxWidth().height(48.dp)
+            ) {
+                Text("Annuler")
+            }
+
+
+        }
+
+
+    }
+}

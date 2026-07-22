@@ -1,0 +1,76 @@
+# Gradle
+.gradle/
+build/
+**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Local configuration (contient des chemins/clés propres à ta machine)
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Kotlin/Native, KMP
+kotlin-js-store/
+.kotlin/
+
+# Android
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+release/
+
+# Xcode / iOS
+iosApp/**/*.xcuserstate
+iosApp/**/xcuserdata/
+iosApp/**/*.xcworkspace/xcuserdata/
+iosApp/**/DerivedData/
+iosApp/**/*.moved-aside
+iosApp/**/*.pbxuser
+iosApp/Pods/
+iosApp/*.xcworkspace
+!iosApp/iosApp.xcworkspace
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# CocoaPods (si jamais utilisé en complément de SPM)
+Pods/
+
+# SPM
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+hs_err_pid*
+
+# Fichiers d'environnement / secrets
+.env
+.env.local
+*.keystore
+!debug.keystore
+
+# SQLDelight generated (optionnel — certains préfèrent versionner, à toi de voir)
+# **/generated/
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*~

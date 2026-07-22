@@ -1,0 +1,24 @@
+package org.creditbook.project.data.remote.dto
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class LoginCommand(
+    val email: String,
+    val password: String
+)
+
+@Serializable
+data class UserDto(
+    val uuid: String,
+    val email: String,
+    val firstName: String,
+    val lastName: String,
+    val roles: List<String>
+)
+
+@Serializable
+data class LoginResponse(
+    val token: String,
+    val user: UserDto
+)

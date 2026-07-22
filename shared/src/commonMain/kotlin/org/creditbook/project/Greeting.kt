@@ -1,0 +1,9 @@
+package org.creditbook.project
+
+class Greeting {
+    private val platform = getPlatform()
+
+    fun greet(): String {
+        return sayHello(platform.name)
+    }
+}

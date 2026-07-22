@@ -1,0 +1,80 @@
+package org.creditbook.project.ui.customers.detail
+
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import org.creditbook.project.ui.transactions.AddDebtScreen
+import org.creditbook.project.ui.transactions.AddPaymentScreen
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+
+import androidx.compose.material3.*
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.Modifier
+import org.creditbook.project.model.Customer
+
+data class CustomerDetailScreen(val customerUuid: String) : Screen {
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+
+        val viewModel = koinViewModel<CustomerDetailViewModel>(
+            key = customerUuid
+        ) { parametersOf(customerUuid) }
+
+        val state by viewModel.state.collectAsState()
+
+
+        val isCurrentScreen = navigator.lastItem == this
+        DisposableEffect(isCurrentScreen) {
+            if (isCurrentScreen) {
+                viewModel.loadAll()
+            }
+            onDispose { }
+        }
+
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(state.customer?.displayName ?: "") },
+                    navigationIcon = {
+                        IconButton(onClick = { navigator.pop() }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
+                        }
+                    }
+                )
+            }
+        ) { padding ->
+            Box(modifier = Modifier.padding(padding)) {
+                CustomerDetailContent(
+                    state = state,
+                    onAddDebtClick = {
+                        navigator.push(
+                            AddDebtScreen(
+                                customerUuid,
+                                state.customer
+                            )
+                        )
+                    },
+                    onAddPaymentClick = {
+                        navigator.push(
+                            AddPaymentScreen(
+                                customerUuid,
+                                state.customer
+                            )
+                        )
+                    },
+                    onCancelEntry = { entryUuid -> viewModel.cancelEntry(entryUuid) }
+                )
+            }
+        }
+    }
+}
