@@ -1,4 +1,4 @@
-package org.creditbook.project.ui.transactions
+package org.creditbook.project.ui.transactions.payment
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -146,12 +146,8 @@ fun AddPaymentContent(
                 onClick = onCancel,
                 modifier = Modifier.fillMaxWidth().height(48.dp)
             ) {
-                Text("Annuler")
+                Text("Retour")
             }
-
-
         }
-
-
     }
 }

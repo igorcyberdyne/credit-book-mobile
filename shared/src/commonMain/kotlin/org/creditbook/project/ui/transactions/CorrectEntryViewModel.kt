@@ -9,9 +9,10 @@ import kotlinx.coroutines.launch
 import org.creditbook.project.data.repository.TransactionRepository
 import org.creditbook.project.model.Money
 
-data class AddDebtUiState(
-    val amountText: String = "",
-    val description: String = "",
+data class CorrectEntryUiState(
+    val amountText: String,
+    val description: String,
+    val paymentMethod: String?, // null si c'est une dette, "CASH"/"CARD" si paiement
     val isSubmitting: Boolean = false,
     val error: String? = null,
     val isSubmitted: Boolean = false
@@ -20,16 +21,24 @@ data class AddDebtUiState(
         get() = amountText.toDoubleOrNull()?.let { it > 0 } ?: false
 }
 
-class AddDebtViewModel(
-    private val clientUuid: String,
+class CorrectEntryViewModel(
+    private val entryUuid: String,
+    initialAmount: Money,
+    initialDescription: String?,
+    initialPaymentMethod: String?,
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(AddDebtUiState())
-    val state: StateFlow<AddDebtUiState> = _state
+    private val _state = MutableStateFlow(
+        CorrectEntryUiState(
+            amountText = initialAmount.decimal(),
+            description = initialDescription ?: "",
+            paymentMethod = initialPaymentMethod
+        )
+    )
+    val state: StateFlow<CorrectEntryUiState> = _state
 
     fun onAmountChange(value: String) {
-        // N'accepte que les chiffres et un séparateur décimal
         val filtered = value.filter { it.isDigit() || it == '.' || it == ',' }.replace(',', '.')
         _state.update { it.copy(amountText = filtered, error = null) }
     }
@@ -39,8 +48,6 @@ class AddDebtViewModel(
     }
 
     fun submit() {
-        println("submit() appelé, montant=${_state.value.amountText}, valide=${_state.value.isAmountValid}")
-
         val current = _state.value
         if (!current.isAmountValid) {
             _state.update { it.copy(error = "Montant invalide") }
@@ -48,14 +55,13 @@ class AddDebtViewModel(
         }
 
         viewModelScope.launch {
-            println("Entrée dans le coroutine de submit")
             _state.update { it.copy(isSubmitting = true, error = null) }
             try {
-                val amount = Money.fromDecimal(current.amountText)
-                transactionRepository.addDebt(
-                    customerUuid = clientUuid,
-                    amount = amount,
-                    description = current.description.ifBlank { null }
+                transactionRepository.correctEntry(
+                    entryUuid = entryUuid,
+                    amountInCents = Money.fromDecimal(current.amountText).cents(),
+                    description = current.description.ifBlank { null },
+                    paymentMethod = current.paymentMethod?.ifBlank { null },
                 )
                 _state.update { it.copy(isSubmitting = false, isSubmitted = true) }
             } catch (e: Exception) {

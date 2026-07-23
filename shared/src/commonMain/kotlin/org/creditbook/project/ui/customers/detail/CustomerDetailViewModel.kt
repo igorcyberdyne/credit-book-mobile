@@ -57,4 +57,15 @@ class CustomerDetailViewModel(
             }
         }
     }
+
+    fun correctEntry(entryUuid: String, reason: String? = null) {
+        viewModelScope.launch {
+            try {
+                transactionRepository.cancelEntry(entryUuid, reason)
+                loadAll() // recharge pour refléter le nouveau solde et le statut annulé
+            } catch (e: Exception) {
+                _state.update { it.copy(error = e.message) }
+            }
+        }
+    }
 }

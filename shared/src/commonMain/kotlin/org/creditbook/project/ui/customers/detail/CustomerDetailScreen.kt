@@ -11,15 +11,15 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.creditbook.project.ui.transactions.AddDebtScreen
-import org.creditbook.project.ui.transactions.AddPaymentScreen
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
-import org.creditbook.project.model.Customer
+import org.creditbook.project.ui.transactions.CorrectEntryScreen
+import org.creditbook.project.ui.transactions.debt.AddDebtScreen
+import org.creditbook.project.ui.transactions.payment.AddPaymentScreen
 
 data class CustomerDetailScreen(val customerUuid: String) : Screen {
     @Composable
@@ -69,6 +69,16 @@ data class CustomerDetailScreen(val customerUuid: String) : Screen {
                             AddPaymentScreen(
                                 customerUuid,
                                 state.customer
+                            )
+                        )
+                    },
+                    onCorrectEntry = { entry ->
+                        navigator.push(
+                            CorrectEntryScreen(
+                                entryUuid = entry.uuid,
+                                currentAmount = entry.amount,
+                                currentDescription = entry.description,
+                                currentPaymentMethod = entry.paymentMethod
                             )
                         )
                     },

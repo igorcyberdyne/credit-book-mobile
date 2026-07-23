@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import org.creditbook.project.model.Customer
 
 @Composable
-@Preview(showSystemUi = true)
 fun CustomerRow(
     customer: Customer,
     onClick: () -> Unit,
@@ -26,7 +25,7 @@ fun CustomerRow(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 10.dp),
+            .padding(horizontal = 12.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {

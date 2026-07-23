@@ -74,6 +74,7 @@ class TransactionRepository(
         description: String? = null,
         paymentMethod: String? = null
     ) {
+        println("----------" + paymentMethod)
         httpClient.post("/api/ledgers/$entryUuid/correct") {
             contentType(ContentType.Application.Json)
             setBody(CorrectEntryCommand(amountInCents, description, paymentMethod))
@@ -89,7 +90,7 @@ class TransactionRepository(
     }
 
     suspend fun fetchTransactionsForCustomer(customerUuid: String): TransactionsPage {
-        return httpClient.get("/api/ledgers/customers/$customerUuid/ledger")
+        return httpClient.get("/api/ledgers/customers/$customerUuid/ledger-v2")
             .body<ApiResponse<TransactionsPageDto>>().data.toDomain()
     }
 

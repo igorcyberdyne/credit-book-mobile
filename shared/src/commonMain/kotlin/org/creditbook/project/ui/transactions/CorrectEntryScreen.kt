@@ -1,9 +1,8 @@
-package org.creditbook.project.ui.customers
+package org.creditbook.project.ui.transactions
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,31 +12,34 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.benasher44.uuid.uuid4
-import org.creditbook.project.ui.customers.detail.CustomerDetailScreen
-import org.creditbook.project.ui.customers.list.CustomerListContent
-import org.creditbook.project.ui.customers.list.CustomerListViewModel
+import org.creditbook.project.model.Money
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-class NewCustomerScreen : Screen {
+class CorrectEntryScreen(
+    val entryUuid: String,
+    val currentAmount: Money,
+    val currentDescription: String?,
+    val currentPaymentMethod: String?
+) : Screen {
     private val screenKey = uuid4().toString()
 
     @Composable
     override fun Content() {
-
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = koinViewModel<NewCustomerViewModel>(key = screenKey)
+        val viewModel = koinViewModel<CorrectEntryViewModel>(key = screenKey) {
+            parametersOf(entryUuid, currentAmount, currentDescription, currentPaymentMethod)
+        }
         val state by viewModel.state.collectAsState()
 
         LaunchedEffect(state.isSubmitted) {
-            if (state.isSubmitted) {
-                navigator.pop()
-            }
+            if (state.isSubmitted) navigator.pop()
         }
 
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Nouveau client") },
+                    title = { Text("Corriger l'opération") },
                     navigationIcon = {
                         IconButton(onClick = { navigator.pop() }) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
@@ -46,16 +48,14 @@ class NewCustomerScreen : Screen {
                 )
             }
         ) { padding ->
-            NewCustomerContent(
+            CorrectEntryContent(
                 state = state,
                 modifier = androidx.compose.ui.Modifier.padding(padding),
-                onFirstnameChange = viewModel::onFirstnameChange,
-                onLastnameChange = viewModel::onLastnameChange,
-                onPhoneChange = viewModel::onPhoneChange,
-                onNoteChange = viewModel::onNoteChange,
-                onSubmit = viewModel::submit
+                onAmountChange = viewModel::onAmountChange,
+                onDescriptionChange = viewModel::onDescriptionChange,
+                onSubmit = viewModel::submit,
+                onCancel = { navigator.pop() },
             )
         }
-
     }
 }

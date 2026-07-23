@@ -1,4 +1,4 @@
-package org.creditbook.project.ui.transactions
+package org.creditbook.project.ui.transactions.payment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
