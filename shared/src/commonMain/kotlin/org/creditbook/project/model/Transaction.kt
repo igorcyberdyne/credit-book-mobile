@@ -1,11 +1,13 @@
 package org.creditbook.project.model
 
+import org.creditbook.project.data.remote.dto.EntryStatus
 import org.creditbook.project.data.remote.dto.EntryType
 import org.creditbook.project.data.remote.dto.PaginationDto
 import org.creditbook.project.data.remote.dto.TransactionEntryDto
 import org.creditbook.project.data.remote.dto.TransactionsPageDto
 
 enum class TransactionType { DEBT, PAYMENT }
+enum class TransactionStatus { ACTIVE, CANCELLED }
 
 data class TransactionEntry(
     val uuid: String,
@@ -13,8 +15,17 @@ data class TransactionEntry(
     val amount: Money,
     val description: String?,
     val occurredAt: String?,
-    val paymentMethod: String?
-)
+    val paymentMethod: String?,
+    val status: TransactionStatus,
+    val isCorrection: Boolean,
+    val canReverse: Boolean,
+    val canCorrect: Boolean,
+    val icon: String?,
+    val color: String?,
+    val badge: String?
+) {
+    val isCancelled: Boolean get() = status == TransactionStatus.CANCELLED
+}
 
 fun TransactionEntryDto.toDomain(): TransactionEntry = TransactionEntry(
     uuid = uuid,
@@ -22,7 +33,14 @@ fun TransactionEntryDto.toDomain(): TransactionEntry = TransactionEntry(
     amount = Money.fromDecimal(amount),
     description = description,
     occurredAt = occurredAt,
-    paymentMethod = paymentMethod?.name
+    paymentMethod = paymentMethod?.name,
+    status = if (status == EntryStatus.CANCELLED) TransactionStatus.CANCELLED else TransactionStatus.ACTIVE,
+    isCorrection = isCorrection,
+    canReverse = canReverse,
+    canCorrect = canCorrect,
+    icon = icon,
+    color = color,
+    badge = badge
 )
 
 data class TransactionsPage(

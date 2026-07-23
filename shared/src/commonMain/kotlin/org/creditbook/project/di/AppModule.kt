@@ -9,8 +9,9 @@ import org.creditbook.project.ui.auth.AuthViewModel
 import org.creditbook.project.ui.customers.NewCustomerViewModel
 import org.creditbook.project.ui.customers.detail.CustomerDetailViewModel
 import org.creditbook.project.ui.customers.list.CustomerListViewModel
-import org.creditbook.project.ui.transactions.AddDebtViewModel
-import org.creditbook.project.ui.transactions.AddPaymentViewModel
+import org.creditbook.project.ui.transactions.CorrectEntryViewModel
+import org.creditbook.project.ui.transactions.debt.AddDebtViewModel
+import org.creditbook.project.ui.transactions.payment.AddPaymentViewModel
 import org.koin.dsl.module
 
 val appModule = module {
@@ -37,4 +38,13 @@ val appModule = module {
     factory { (clientUuid: String) -> CustomerDetailViewModel(clientUuid, get(), get()) }
     factory { (clientUuid: String) -> AddDebtViewModel(clientUuid, get()) }
     factory { (clientUuid: String) -> AddPaymentViewModel(clientUuid, get(), get(), get()) }
+    factory { params ->
+        CorrectEntryViewModel(
+            entryUuid = params[0],
+            initialAmount = params[1],
+            initialDescription = params[2],
+            initialPaymentMethod = params[3],
+            transactionRepository = get()
+        )
+    }
 }

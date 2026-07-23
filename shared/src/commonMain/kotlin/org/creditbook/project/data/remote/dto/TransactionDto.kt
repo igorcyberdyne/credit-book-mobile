@@ -32,13 +32,26 @@ enum class PaymentMethod {
 }
 
 @Serializable
+enum class EntryStatus {
+    @SerialName("ACTIVE") ACTIVE,
+    @SerialName("CANCELLED") CANCELLED
+}
+
+@Serializable
 data class TransactionEntryDto(
     val uuid: String,
     val type: EntryType,
-    val amount: String,               // décimal en chaîne, ex. "10.00"
+    val amount: String, // décimal en chaîne, ex. "10.00"
     val description: String? = null,
-    val occurredAt: String? = null,   // absent parfois, cf. remarque
-    val paymentMethod: PaymentMethod? = null
+    val occurredAt: String? = null, // absent parfois, cf. remarque
+    val paymentMethod: PaymentMethod? = null,
+    val status: EntryStatus = EntryStatus.ACTIVE,
+    val isCorrection: Boolean = false,
+    val canReverse: Boolean = true,
+    val canCorrect: Boolean = true,
+    val icon: String? = null,
+    val color: String? = null,
+    val badge: String? = null
 )
 
 @Serializable

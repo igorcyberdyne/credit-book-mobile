@@ -42,7 +42,7 @@ object CustomerListScreen : Screen {
                 TopAppBar(
                     title = { Text("Clients") },
                     actions = {
-                        IconButton(onClick = { navigator.push(NewCustomerScreen) }) {
+                        IconButton(onClick = { navigator.push(NewCustomerScreen()) }) {
                             Icon(Icons.Default.Add, contentDescription = "Nouveau client")
                         }
                     }

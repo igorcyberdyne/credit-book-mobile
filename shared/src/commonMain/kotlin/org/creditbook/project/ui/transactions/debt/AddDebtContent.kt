@@ -1,10 +1,9 @@
-package org.creditbook.project.ui.transactions
+package org.creditbook.project.ui.transactions.debt
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -25,17 +24,6 @@ fun AddDebtContent(
         CustomerHeaderContent(customer)
 
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            /*Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Nouvelle ardoise", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.width(64.dp)) // équilibre visuel avec le bouton "Annuler"
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))*/
-
             OutlinedTextField(
                 value = state.amountText,
                 onValueChange = onAmountChange,
@@ -85,12 +73,11 @@ fun AddDebtContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-
             OutlinedButton(
                 onClick = onCancel,
                 modifier = Modifier.fillMaxWidth().height(48.dp)
             ) {
-                Text("Annuler")
+                Text("Retour")
             }
         }
     }
