@@ -12,14 +12,23 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import org.creditbook.project.data.auth.TokenStorage
 import org.creditbook.project.data.remote.dto.ApiResponse
+import org.creditbook.project.data.remote.dto.DashboardStatsDto
+import org.creditbook.project.model.DashboardStats
 
 class CustomerRepository(
     private val httpClient: HttpClient,
 ) {
-    suspend fun fetchCustomers(page: Int = 1, limit: Int = 20): CustomersPage {
+
+    suspend fun fetchDashboardStats(): DashboardStats {
+        return httpClient.get("/api/dashboard")
+            .body<ApiResponse<DashboardStatsDto>>().data.toDomain()
+    }
+
+    suspend fun fetchCustomers(page: Int = 1, limit: Int = 20, search: String? = null): CustomersPage {
         return httpClient.get("/api/customers") {
             parameter("page", page)
             parameter("limit", limit)
+            search?.let { parameter("q", it) }
         }.body<ApiResponse<CustomersPageDto>>().data.toDomain()
     }
 
@@ -37,4 +46,5 @@ class CustomerRepository(
             setBody(command)
         }.body<ApiResponse<CustomerDto>>().data.toDomain()
     }
+
 }

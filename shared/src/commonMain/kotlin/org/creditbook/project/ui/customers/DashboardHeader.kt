@@ -1,0 +1,67 @@
+package org.creditbook.project.ui.customers
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import org.creditbook.project.model.DashboardStats
+
+@Composable
+fun DashboardHeader(
+    stats: DashboardStats?,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        //Text(stats?.shopName ?: "", style = MaterialTheme.typography.titleLarge)
+        Text(stats?.address ?: "", style = MaterialTheme.typography.titleMedium)
+        Text((stats?.city ?: "") + " " + (stats?.postalCode ?: ""), style = MaterialTheme.typography.titleMedium)
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Card(
+                modifier = Modifier.weight(1f),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Column(modifier = Modifier.padding(10.dp)) {
+                    Text("Total dû", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stats?.totalDue?.format() ?: "—", style = MaterialTheme.typography.titleMedium)
+                }
+            }
+
+            Card(
+                modifier = Modifier.weight(1f),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Column(modifier = Modifier.padding(10.dp)) {
+                    Text("Ardoises ouvertes", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        stats?.customersWithDebtCount?.toString() ?: "—",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = onSearchQueryChange,
+            placeholder = { Text("Chercher un client") },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}

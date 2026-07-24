@@ -8,6 +8,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.creditbook.project.data.repository.CustomerRepository
 import org.creditbook.project.model.Customer
+import org.creditbook.project.model.DashboardStats
+import org.creditbook.project.model.Money
+
+
 
 data class CustomerListUiState(
     val customers: List<Customer> = emptyList(),
@@ -15,7 +19,10 @@ data class CustomerListUiState(
     val isLoadingMore: Boolean = false,
     val currentPage: Int = 1,
     val hasNextPage: Boolean = true,
-    val error: String? = null
+    val error: String? = null,
+
+    val stats: DashboardStats? = null,
+    val searchQuery: String = "",
 )
 
 class CustomerListViewModel(
@@ -26,16 +33,17 @@ class CustomerListViewModel(
     val state: StateFlow<CustomerListUiState> = _state
 
     fun loadFirstPage() {
+        val current = _state.value
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
             try {
-                val page = repository.fetchCustomers(page = 1)
+                val page = repository.fetchCustomers(page = 1, search = current.searchQuery)
                 _state.update {
                     it.copy(
                         customers = page.customers,
                         currentPage = page.currentPage,
                         hasNextPage = page.hasNextPage,
-                        isLoading = false
+                        isLoading = false,
                     )
                 }
             } catch (e: Exception) {
@@ -67,7 +75,24 @@ class CustomerListViewModel(
         }
     }
 
+    fun onSearchQueryChange(query: String) {
+        _state.update { it.copy(searchQuery = query) }
+        loadFirstPage() // relance la recherche à chaque frappe (à débouncer si besoin, cf. remarque plus bas)
+    }
+
     fun refresh() {
         loadFirstPage()
+        loadStats()
+    }
+
+    private fun loadStats() {
+        viewModelScope.launch {
+            try {
+                val stats = repository.fetchDashboardStats()
+                _state.update { it.copy(stats = stats) }
+            } catch (e: Exception) {
+                // Silencieux volontairement : l'absence de stats ne doit pas bloquer la liste
+            }
+        }
     }
 }
