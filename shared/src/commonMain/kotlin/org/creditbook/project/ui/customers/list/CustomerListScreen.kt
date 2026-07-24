@@ -40,7 +40,7 @@ object CustomerListScreen : Screen {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Clients") },
+                    title = { Text(state.stats?.shopName ?: "Dashboard") },
                     actions = {
                         IconButton(onClick = { navigator.push(NewCustomerScreen()) }) {
                             Icon(Icons.Default.Add, contentDescription = "Nouveau client")
@@ -53,6 +53,7 @@ object CustomerListScreen : Screen {
                 CustomerListContent(
                     state = state,
                     onCustomerClick = { customer -> navigator.push(CustomerDetailScreen(customer.uuid)) },
+                    onSearchQueryChange = viewModel::onSearchQueryChange,
                     onLoadMore = { viewModel.loadNextPage() }
                 )
             }

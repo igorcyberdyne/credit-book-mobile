@@ -90,7 +90,7 @@ class TransactionRepository(
     }
 
     suspend fun fetchTransactionsForCustomer(customerUuid: String): TransactionsPage {
-        return httpClient.get("/api/ledgers/customers/$customerUuid/ledger-v2")
+        return httpClient.get("/api/ledgers/customers/$customerUuid/ledger")
             .body<ApiResponse<TransactionsPageDto>>().data.toDomain()
     }
 
