@@ -10,6 +10,10 @@ private const val KEY_JWT_TOKEN = "jwt_token"
 private const val KEY_JWT_SAVE_AT = "jwt_save_at"
 private const val JWT_TOKEN_EXPIRES_IN = 3600L
 
+private const val KEY_TOKEN = "jwt_token"
+private const val KEY_REFRESH_TOKEN = "jwt_refresh_token"
+private const val KEY_EXPIRES_AT = "jwt_expires_at"
+
 class TokenStorage(
     private val settings: Settings
 ) {
@@ -19,6 +23,13 @@ class TokenStorage(
         settings[KEY_JWT_TOKEN] = token
         settings[KEY_JWT_SAVE_AT] = Clock.System.now().epochSeconds
 
+    }
+
+    @OptIn(ExperimentalTime::class)
+    suspend fun saveTokens(token: String, refreshToken: String, expiresInSeconds: Long) {
+        settings[KEY_TOKEN] = token
+        settings[KEY_REFRESH_TOKEN] = refreshToken
+        settings[KEY_EXPIRES_AT] = Clock.System.now().epochSeconds + expiresInSeconds
     }
 
     @OptIn(ExperimentalTime::class)
@@ -35,18 +46,13 @@ class TokenStorage(
 
     }
 
-    fun getToken(): String? {
-        val token: String? = settings.getStringOrNull(KEY_JWT_TOKEN)
+    suspend fun getToken(): String? = settings.getStringOrNull(KEY_TOKEN)
 
-        if (isTokenExpired(token)) {
-            return null
-        }
+    suspend fun getRefreshToken(): String? = settings.getStringOrNull(KEY_REFRESH_TOKEN)
 
-        return token;
-    }
-
-    fun clearToken() {
-        settings.remove(KEY_JWT_TOKEN)
-        settings.remove(KEY_JWT_SAVE_AT)
+    fun clearTokens() {
+        settings.remove(KEY_TOKEN)
+        settings.remove(KEY_REFRESH_TOKEN)
+        settings.remove(KEY_EXPIRES_AT)
     }
 }

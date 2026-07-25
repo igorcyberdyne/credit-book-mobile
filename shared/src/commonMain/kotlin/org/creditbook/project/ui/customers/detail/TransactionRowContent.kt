@@ -92,7 +92,7 @@ fun TransactionRowContent(
     if (showActionSheet) {
         AlertDialog(
             onDismissRequest = { showActionSheet = false },
-            title = { Text("Que faire sur cette ligne ?") },
+            title = { Text("Que faire sur cette opération ?") },
             text = { Text(entry.description ?: "Aucune description") },
             confirmButton = {
                 if (entry.canCorrect) {
@@ -107,7 +107,7 @@ fun TransactionRowContent(
                     TextButton(onClick = {
                         showActionSheet = false
                         showCancelConfirm = true
-                    }) { Text("Annuler la ligne", color = MaterialTheme.colorScheme.error) }
+                    }) { Text("Annuler l'opération", color = MaterialTheme.colorScheme.error) }
                 }
             }
         )
@@ -116,7 +116,7 @@ fun TransactionRowContent(
     if (showCancelConfirm) {
         AlertDialog(
             onDismissRequest = { showCancelConfirm = false },
-            title = { Text("Annuler cette ligne ?") },
+            title = { Text("Annuler cette opération ?") },
             text = { Text("Le solde du client sera recalculé après annulation.") },
             confirmButton = {
                 TextButton(onClick = {
