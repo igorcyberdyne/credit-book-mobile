@@ -22,13 +22,14 @@ class AuthRepository(
             setBody(LoginCommand(email, password))
         }.body<ApiResponse<LoginResponse>>().data
 
-        tokenStorage.saveToken(response.token)
+        tokenStorage.saveTokens(response.token, response.refreshToken, response.expiresIn)
+
 
         return response.user.toDomain()
     }
 
     suspend fun logout() {
-        tokenStorage.clearToken()
+        tokenStorage.clearTokens()
     }
 
     suspend fun isLoggedIn(): Boolean {
