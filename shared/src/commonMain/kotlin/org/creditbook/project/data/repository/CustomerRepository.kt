@@ -10,9 +10,9 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import org.creditbook.project.data.auth.TokenStorage
 import org.creditbook.project.data.remote.dto.ApiResponse
 import org.creditbook.project.data.remote.dto.DashboardStatsDto
+import org.creditbook.project.data.remote.dto.UpdateCustomerCommand
 import org.creditbook.project.model.DashboardStats
 
 class CustomerRepository(
@@ -24,7 +24,11 @@ class CustomerRepository(
             .body<ApiResponse<DashboardStatsDto>>().data.toDomain()
     }
 
-    suspend fun fetchCustomers(page: Int = 1, limit: Int = 20, search: String? = null): CustomersPage {
+    suspend fun fetchCustomers(
+        page: Int = 1,
+        limit: Int = 20,
+        search: String? = null
+    ): CustomersPage {
         return httpClient.get("/api/customers") {
             parameter("page", page)
             parameter("limit", limit)
@@ -42,6 +46,16 @@ class CustomerRepository(
         command: CreateCustomerCommand
     ): Customer {
         return httpClient.post("/api/customers") {
+            contentType(ContentType.Application.Json)
+            setBody(command)
+        }.body<ApiResponse<CustomerDto>>().data.toDomain()
+    }
+
+    suspend fun updateCustomer(
+        uuid: String,
+        command: UpdateCustomerCommand
+    ): Customer {
+        return httpClient.put("/api/customers/$uuid") {
             contentType(ContentType.Application.Json)
             setBody(command)
         }.body<ApiResponse<CustomerDto>>().data.toDomain()

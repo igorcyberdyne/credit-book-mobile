@@ -73,6 +73,9 @@ kotlin {
             implementation("io.insert-koin:koin-compose-viewmodel:4.2.2")
             implementation("io.ktor:ktor-client-logging:2.3.12")
             implementation("cafe.adriel.voyager:voyager-core:1.1.0-beta02")
+            implementation("cafe.adriel.voyager:voyager-tab-navigator:1.1.0-beta02")
+
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
         }
         iosMain.dependencies {
             implementation("io.ktor:ktor-client-darwin:2.3.12")

@@ -24,7 +24,8 @@ data class CustomerBalance(
     val balance: Money,
     val totalDebt: Money,
     val totalPaid: Money,
-    val operationsCount: Int
+    val operationsCount: Int,
+    val lastDate: String? = null
 ) {
     val hasDebt: Boolean get() = balance.isPositive()
 }
@@ -50,7 +51,8 @@ fun BalanceDto.toDomain(): CustomerBalance = CustomerBalance(
     balance = Money.fromCents(balanceInCents),
     totalDebt = Money.fromCents(totalDebtInCents),
     totalPaid = Money.fromCents(totalPaidInCents),
-    operationsCount = operations
+    operationsCount = operations,
+    lastDate = lastDate,
 )
 
 fun CustomerDto.toDomain(): Customer = Customer(
@@ -63,6 +65,7 @@ fun CustomerDto.toDomain(): Customer = Customer(
         balance = Money.fromCents(0),
         totalDebt = Money.fromCents(0),
         totalPaid = Money.fromCents(0),
-        operationsCount = 0
+        operationsCount = 0,
+        lastDate = ""
     )
 )

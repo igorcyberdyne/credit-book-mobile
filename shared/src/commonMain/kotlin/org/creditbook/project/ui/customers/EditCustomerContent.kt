@@ -8,8 +8,8 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun NewCustomerContent(
-    state: NewCustomerUiState,
+fun EditCustomerContent(
+    state: EditCustomerUiState,
     modifier: Modifier = Modifier,
     onFirstnameChange: (String) -> Unit,
     onLastnameChange: (String) -> Unit,
@@ -38,9 +38,6 @@ fun NewCustomerContent(
             onValueChange = onLastnameChange,
             label = { Text("Nom (optionnel)") },
             singleLine = true,
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                capitalization = KeyboardCapitalization.Words
-            ),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -93,7 +90,7 @@ fun NewCustomerContent(
                     strokeWidth = 2.dp
                 )
             } else {
-                Text("Créer le client")
+                Text("Enregistrer")
             }
         }
     }

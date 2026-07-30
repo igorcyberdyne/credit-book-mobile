@@ -1,9 +1,9 @@
 package org.creditbook.project.ui.customers
 
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,32 +12,32 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.benasher44.uuid.uuid4
-import org.creditbook.project.ui.customers.detail.CustomerDetailScreen
-import org.creditbook.project.ui.customers.list.CustomerListContent
-import org.creditbook.project.ui.customers.list.CustomerListViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
-class NewCustomerScreen : Screen {
-    private val screenKey = uuid4().toString()
-
+data class EditCustomerScreen(
+    val clientUuid: String,
+    val currentFirstname: String,
+    val currentLastname: String?,
+    val currentPhone: String?,
+    val currentNote: String?
+) : Screen {
     @Composable
     override fun Content() {
-
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = koinViewModel<NewCustomerViewModel>(key = screenKey)
+        val viewModel = koinViewModel<EditCustomerViewModel>(key = clientUuid) {
+            parametersOf(clientUuid, currentFirstname, currentLastname, currentPhone, currentNote)
+        }
         val state by viewModel.state.collectAsState()
 
         LaunchedEffect(state.isSubmitted) {
-            if (state.isSubmitted) {
-                navigator.pop()
-            }
+            if (state.isSubmitted) navigator.pop()
         }
 
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Nouvelle ardoise") },
+                    title = { Text("Modifier le client") },
                     navigationIcon = {
                         IconButton(onClick = { navigator.pop() }) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
@@ -46,7 +46,7 @@ class NewCustomerScreen : Screen {
                 )
             }
         ) { padding ->
-            NewCustomerContent(
+            EditCustomerContent(
                 state = state,
                 modifier = androidx.compose.ui.Modifier.padding(padding),
                 onFirstnameChange = viewModel::onFirstnameChange,
@@ -56,6 +56,5 @@ class NewCustomerScreen : Screen {
                 onSubmit = viewModel::submit
             )
         }
-
     }
 }

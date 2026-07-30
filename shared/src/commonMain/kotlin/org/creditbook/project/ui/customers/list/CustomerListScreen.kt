@@ -1,10 +1,11 @@
 package org.creditbook.project.ui.customers.list
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -39,17 +41,17 @@ object CustomerListScreen : Screen {
 
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { Text(state.stats?.shopName ?: "Dashboard") },
-                    actions = {
-                        IconButton(onClick = { navigator.push(NewCustomerScreen()) }) {
-                            Icon(Icons.Default.Add, contentDescription = "Nouveau client")
-                        }
-                    }
+                TopAppBar(title = { Text("Clients") })
+            },
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    onClick = { navigator.push(NewCustomerScreen()) },
+                    icon = { Icon(Icons.Default.Add, contentDescription = null) },
+                    text = { Text("Nouvelle ardoise") }
                 )
             }
         ) { padding ->
-            androidx.compose.foundation.layout.Box(modifier = androidx.compose.ui.Modifier.padding(padding)) {
+            Box(modifier = Modifier.padding(padding)) {
                 CustomerListContent(
                     state = state,
                     onCustomerClick = { customer -> navigator.push(CustomerDetailScreen(customer.uuid)) },

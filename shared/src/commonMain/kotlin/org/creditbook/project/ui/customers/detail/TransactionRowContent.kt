@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.creditbook.project.lib.formatDate
 import org.creditbook.project.model.TransactionEntry
 import org.creditbook.project.model.TransactionType
 import org.creditbook.project.ui.transactions.entryColorFor
@@ -74,7 +75,11 @@ fun TransactionRowContent(
                     color = entryColorFor(entry.color)
                 )
                 entry.occurredAt?.let {
-                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        formatDate(it),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 entry.badge?.let {
                     Text(it, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
