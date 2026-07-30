@@ -32,7 +32,6 @@ data class AddPaymentScreen(val customerUuid: String, val customer: Customer?) :
                 navigator.pop()
             }
         }
-
         Scaffold(
             topBar = {
                 TopAppBar(

@@ -37,9 +37,18 @@ data class Money private constructor(
 
     // Équivalent de format() : "10,00 €"
     fun format(): String {
-        val euros = amountInCents / 100
-        val centsPart = kotlin.math.abs(amountInCents % 100).toString().padStart(2, '0')
-        return "$euros,$centsPart ${currency.symbol}"
+        val decimal = decimal()
+        val parts = decimal.split(".")
+
+        val integerPart = parts[0]
+            .reversed()
+            .chunked(3)
+            .joinToString(" ")
+            .reversed()
+
+        val decimalPart = parts[1]
+
+        return "$integerPart,$decimalPart ${currency.symbol}"
     }
 
     operator fun plus(other: Money): Money {

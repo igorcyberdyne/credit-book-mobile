@@ -56,17 +56,6 @@ fun CustomerListContent(
 
                 else -> {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        /*items(state.customers) { customer ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 6.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                            ) {
-                                CustomerRow(customer = customer, onClick = { onCustomerClick(customer) })
-                            }
-                        }*/
                         itemsIndexed(state.customers) { index, customer ->
                             CustomerRow(customer = customer, onClick = { onCustomerClick(customer) })
                             if (index < state.customers.lastIndex) {

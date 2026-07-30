@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,6 +18,8 @@ import org.koin.core.parameter.parametersOf
 import androidx.compose.material3.*
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import org.creditbook.project.ui.customers.EditCustomerScreen
+import org.creditbook.project.ui.customers.list.CustomerListContent
 import org.creditbook.project.ui.transactions.CorrectEntryScreen
 import org.creditbook.project.ui.transactions.debt.AddDebtScreen
 import org.creditbook.project.ui.transactions.payment.AddPaymentScreen
@@ -48,6 +51,23 @@ data class CustomerDetailScreen(val customerUuid: String) : Screen {
                     navigationIcon = {
                         IconButton(onClick = { navigator.pop() }) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
+                        }
+                    },
+                    actions = {
+                        state.customer?.let { customer ->
+                            IconButton(onClick = {
+                                navigator.push(
+                                    EditCustomerScreen(
+                                        clientUuid = customer.uuid,
+                                        currentFirstname = customer.firstname,
+                                        currentLastname = customer.lastname,
+                                        currentPhone = customer.phone,
+                                        currentNote = customer.note
+                                    )
+                                )
+                            }) {
+                                Icon(Icons.Default.Edit, contentDescription = "Éditer")
+                            }
                         }
                     }
                 )

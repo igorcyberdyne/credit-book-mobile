@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.creditbook.project.data.remote.dto.ApiException
-import org.creditbook.project.data.remote.dto.CreateCustomerCommand
+import org.creditbook.project.data.remote.dto.UpdateCustomerCommand
 import org.creditbook.project.data.repository.CustomerRepository
 
-data class NewCustomerUiState(
-    val firstname: String = "",
-    val lastname: String = "",
-    val phone: String = "",
-    val note: String = "",
+data class EditCustomerUiState(
+    val firstname: String,
+    val lastname: String,
+    val phone: String,
+    val note: String,
     val isSubmitting: Boolean = false,
     val error: String? = null,
     val fieldErrors: List<String> = emptyList(),
@@ -24,12 +24,24 @@ data class NewCustomerUiState(
         get() = firstname.isNotBlank() && phone.isNotBlank()
 }
 
-class NewCustomerViewModel(
+class EditCustomerViewModel(
+    private val clientUuid: String,
+    initialFirstname: String,
+    initialLastname: String?,
+    initialPhone: String?,
+    initialNote: String?,
     private val customerRepository: CustomerRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(NewCustomerUiState())
-    val state: StateFlow<NewCustomerUiState> = _state
+    private val _state = MutableStateFlow(
+        EditCustomerUiState(
+            firstname = initialFirstname,
+            lastname = initialLastname ?: "",
+            phone = initialPhone ?: "",
+            note = initialNote ?: ""
+        )
+    )
+    val state: StateFlow<EditCustomerUiState> = _state
 
     fun onFirstnameChange(value: String) {
         _state.update { it.copy(firstname = value, error = null) }
@@ -40,7 +52,7 @@ class NewCustomerViewModel(
     }
 
     fun onPhoneChange(value: String) {
-        _state.update { it.copy(phone = value, error = null) }
+        _state.update { it.copy(phone = value) }
     }
 
     fun onNoteChange(value: String) {
@@ -65,8 +77,9 @@ class NewCustomerViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isSubmitting = true, error = null, fieldErrors = emptyList()) }
             try {
-                customerRepository.createCustomer(
-                    CreateCustomerCommand(
+                customerRepository.updateCustomer(
+                    uuid = clientUuid,
+                    UpdateCustomerCommand(
                         firstname = current.firstname.trim(),
                         lastname = current.lastname.trim().ifBlank { null },
                         phone = current.phone.trim(),
@@ -82,13 +95,8 @@ class NewCustomerViewModel(
                         fieldErrors = e.details
                     )
                 }
-            } catch (e: Exception) {
-                _state.update {
-                    it.copy(
-                        isSubmitting = false,
-                        error = "Impossible de créer le client, vérifiez votre connexion"
-                    )
-                }
+            } catch (_: Exception) {
+                _state.update { it.copy(isSubmitting = false, error = "Impossible de modifier le client") }
             }
         }
     }

@@ -19,6 +19,7 @@ import org.creditbook.project.di.AuthEvents
 import org.creditbook.project.sync.ConnectivityObserver
 import org.creditbook.project.ui.auth.LoginScreen
 import org.creditbook.project.ui.customers.list.CustomerListScreen
+import org.creditbook.project.ui.main.MainScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -49,7 +50,7 @@ fun AppEntryPoint() {
             CircularProgressIndicator()
         }
     } else {
-        val startScreen = if (isLoggedIn) CustomerListScreen else LoginScreen
+        val startScreen = if (isLoggedIn) MainScreen else LoginScreen
 
         Navigator(startScreen) { navigator ->
             // Empêche Voyager de restaurer une pile de navigation d'une session précédente
@@ -68,16 +69,5 @@ fun AppEntryPoint() {
 
             CurrentScreen()
         }
-
-        /*
-        // Navigator Voyager classique, mais on garde une référence pour rediriger depuis l'extérieur
-        Navigator(if (isLoggedIn) CustomerListScreen else LoginScreen) { nav ->
-            LaunchedEffect(Unit) {
-                AuthEvents.onUnauthorized.collect {
-                    nav.replaceAll(LoginScreen)
-                }
-            }
-            CurrentScreen()
-        }*/
     }
 }

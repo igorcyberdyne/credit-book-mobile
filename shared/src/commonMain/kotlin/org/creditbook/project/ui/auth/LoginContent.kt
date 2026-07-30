@@ -31,7 +31,6 @@ import org.creditbook.project.model.User
 
 
 @Composable
-@Preview(showSystemUi = true)
 fun LoginContent(
     viewModel: AuthViewModel,
     onLoginSuccess: (User) -> Unit

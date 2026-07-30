@@ -13,8 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.creditbook.project.lib.formatDate
 import org.creditbook.project.model.Customer
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun CustomerRow(
     customer: Customer,
@@ -50,11 +54,13 @@ fun CustomerRow(
                 text = customer.displayName,
                 style = MaterialTheme.typography.bodyLarge
             )
-            Text(
-                text = customer.balance.operationsCount.let { "$it opération${if (it > 1) "s" else ""}" },
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            customer.balance.lastDate?.let {
+                Text(
+                    text = formatDate(it),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
 
         // Badge de solde

@@ -7,7 +7,8 @@ data class BalanceDto(
     val balanceInCents: Long,
     val totalDebtInCents: Long,
     val totalPaidInCents: Long,
-    val operations: Int
+    val operations: Int,
+    val lastDate: String?
 )
 
 @Serializable
@@ -17,7 +18,8 @@ data class CustomerDto(
     val lastname: String? = null,
     val phone: String? = null,
     val note: String? = null,
-    val balance: BalanceDto? = null
+    val balance: BalanceDto? = null,
+    val lastDate: String? = null
 )
 
 @Serializable
@@ -40,6 +42,14 @@ data class CustomersPageDto(
 data class CreateCustomerCommand(
     val firstname: String,
     val lastname: String? = null,
-    val phone: String? = null,
+    val phone: String,
+    val note: String? = null
+)
+
+@Serializable
+data class UpdateCustomerCommand(
+    val firstname: String,
+    val lastname: String? = null,
+    val phone: String,
     val note: String? = null
 )

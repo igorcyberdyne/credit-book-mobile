@@ -99,7 +99,7 @@ fun createHttpClient(
         install(ContentNegotiation) { json(json) }
 
         // TODO DELETE LOG
-        install(Logging) { level = LogLevel.ALL }
+        // install(Logging) { level = LogLevel.ALL }
 
         // Géré manuellement dans l'intercepteur ci-dessous, pour pouvoir
         // inspecter le code d'erreur avant de décider (retry vs déconnexion).

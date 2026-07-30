@@ -6,6 +6,7 @@ import org.creditbook.project.data.repository.AuthRepository
 import org.creditbook.project.data.repository.CustomerRepository
 import org.creditbook.project.data.repository.TransactionRepository
 import org.creditbook.project.ui.auth.AuthViewModel
+import org.creditbook.project.ui.customers.EditCustomerViewModel
 import org.creditbook.project.ui.customers.NewCustomerViewModel
 import org.creditbook.project.ui.customers.detail.CustomerDetailViewModel
 import org.creditbook.project.ui.customers.list.CustomerListViewModel
@@ -18,7 +19,7 @@ val appModule = module {
     single { TokenStorage(get()) }
     single {
         createHttpClient(
-            baseUrl = "http://localhost:8080",
+            baseUrl = "https://creditbook.ekolotech.fr",
             tokenStorage = get(),
             onUnauthorized = {
                 get<AuthRepository>().logout()
@@ -45,6 +46,16 @@ val appModule = module {
             initialDescription = params[2],
             initialPaymentMethod = params[3],
             transactionRepository = get()
+        )
+    }
+    factory { params ->
+        EditCustomerViewModel(
+            clientUuid = params[0],
+            initialFirstname = params[1],
+            initialLastname = params[2],
+            initialPhone = params[3],
+            initialNote = params[4],
+            customerRepository = get()
         )
     }
 }
