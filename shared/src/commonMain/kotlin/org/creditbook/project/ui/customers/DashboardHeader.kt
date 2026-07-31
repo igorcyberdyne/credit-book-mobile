@@ -16,7 +16,7 @@ fun DashboardHeader(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
         //Text(stats?.shopName ?: "", style = MaterialTheme.typography.titleLarge)
         Text(stats?.address ?: "", style = MaterialTheme.typography.titleMedium)
         Text((stats?.city ?: "") + " " + (stats?.postalCode ?: ""), style = MaterialTheme.typography.titleMedium)

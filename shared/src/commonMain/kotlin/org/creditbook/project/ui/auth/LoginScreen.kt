@@ -7,6 +7,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.creditbook.project.ui.customers.list.CustomerListScreen
 import org.creditbook.project.ui.main.MainScreen
+import org.creditbook.project.ui.onboarding.OnboardingScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 object LoginScreen : Screen {
@@ -19,6 +20,9 @@ object LoginScreen : Screen {
             viewModel = viewModel,
             onLoginSuccess = {
                 navigator.replaceAll(MainScreen)
+            },
+            onOnboardingUser = {
+                navigator.push(OnboardingScreen)
             }
         )
     }

@@ -10,6 +10,7 @@ import org.creditbook.project.ui.customers.EditCustomerViewModel
 import org.creditbook.project.ui.customers.NewCustomerViewModel
 import org.creditbook.project.ui.customers.detail.CustomerDetailViewModel
 import org.creditbook.project.ui.customers.list.CustomerListViewModel
+import org.creditbook.project.ui.onboarding.OnboardingViewModel
 import org.creditbook.project.ui.transactions.CorrectEntryViewModel
 import org.creditbook.project.ui.transactions.debt.AddDebtViewModel
 import org.creditbook.project.ui.transactions.payment.AddPaymentViewModel
@@ -58,4 +59,5 @@ val appModule = module {
             customerRepository = get()
         )
     }
+    factory { OnboardingViewModel(get()) }
 }

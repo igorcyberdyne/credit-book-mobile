@@ -11,6 +11,7 @@ import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.request.*
 import io.ktor.http.*
 import org.creditbook.project.data.remote.dto.ApiResponse
+import org.creditbook.project.data.remote.dto.OnboardingCommand
 
 class AuthRepository(
     private val httpClient: HttpClient,
@@ -34,5 +35,16 @@ class AuthRepository(
 
     suspend fun isLoggedIn(): Boolean {
         return tokenStorage.getToken() != null
+    }
+
+    suspend fun onboard(command: OnboardingCommand): User {
+        val response = httpClient.post("/api/onboarding") {
+            contentType(ContentType.Application.Json)
+            setBody(command)
+        }.body<ApiResponse<LoginResponse>>().data
+
+        tokenStorage.saveTokens(response.token, response.refreshToken, response.expiresIn)
+
+        return response.user.toDomain()
     }
 }
