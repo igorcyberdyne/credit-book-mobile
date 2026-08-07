@@ -206,6 +206,7 @@
 				);
 				OTHER_LDFLAGS = "-lsqlite3";
 				"OTHER_LDFLAGS[arch=*]" = "-lsqlite3";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -236,6 +237,7 @@
 				);
 				OTHER_LDFLAGS = "-lsqlite3";
 				"OTHER_LDFLAGS[arch=*]" = "-lsqlite3";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

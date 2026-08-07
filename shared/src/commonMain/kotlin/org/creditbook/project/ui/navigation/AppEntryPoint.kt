@@ -13,12 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import org.creditbook.project.data.local.SessionDatabase
 import org.creditbook.project.data.repository.AuthRepository
 import org.creditbook.project.data.repository.TransactionRepository
 import org.creditbook.project.di.AuthEvents
 import org.creditbook.project.sync.ConnectivityObserver
 import org.creditbook.project.ui.auth.LoginScreen
-import org.creditbook.project.ui.customers.list.CustomerListScreen
+import org.creditbook.project.ui.common.error.ErrorDialog
 import org.creditbook.project.ui.main.MainScreen
 import org.koin.compose.koinInject
 
@@ -27,6 +28,7 @@ fun AppEntryPoint() {
     val authRepository = koinInject<AuthRepository>()
     val connectivityObserver = koinInject<ConnectivityObserver>()
     val transactionRepository = koinInject<TransactionRepository>()
+    val sessionDatabase = koinInject<SessionDatabase>()
 
     var isCheckingAuth by remember { mutableStateOf(true) }
     var isLoggedIn by remember { mutableStateOf(false) }
@@ -39,7 +41,7 @@ fun AppEntryPoint() {
     // Démarre l'observation réseau dès le lancement de l'app, en continu
     LaunchedEffect(Unit) {
         connectivityObserver.observe().collect { isOnline ->
-            if (isOnline) {
+            if (isOnline && sessionDatabase.hasSession()) {
                 transactionRepository.syncPendingTransactions()
             }
         }
@@ -68,6 +70,8 @@ fun AppEntryPoint() {
             }
 
             CurrentScreen()
+
+            ErrorDialog() // affiché par-dessus le Navigator, visible depuis n'importe quel écran
         }
     }
 }

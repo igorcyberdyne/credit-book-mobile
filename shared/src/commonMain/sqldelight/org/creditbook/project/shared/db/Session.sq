@@ -1,0 +1,32 @@
+CREATE TABLE SessionInfo (
+    id INTEGER PRIMARY KEY NOT NULL DEFAULT 0,
+    userUuid TEXT NOT NULL,
+    email TEXT NOT NULL,
+    firstName TEXT NOT NULL,
+    lastName TEXT NOT NULL,
+    roles TEXT NOT NULL,           -- rôles concaténés séparés par une virgule
+    shopUuid TEXT NOT NULL,
+    shopName TEXT NOT NULL,
+    shopAddress TEXT,
+    shopPostalCode TEXT,
+    shopCity TEXT,
+    shopCountry TEXT,
+    shopPhone TEXT,
+    shopCurrency TEXT NOT NULL
+);
+
+selectSession:
+SELECT * FROM SessionInfo WHERE id = 0;
+
+insertOrReplaceSession:
+INSERT OR REPLACE INTO SessionInfo(
+    id, userUuid, email, firstName, lastName, roles,
+    shopUuid, shopName, shopAddress, shopPostalCode, shopCity, shopCountry, shopPhone, shopCurrency
+)
+VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+clearSession:
+DELETE FROM SessionInfo WHERE id = 0;
+
+hasSession:
+SELECT COUNT(1) AS nb FROM SessionInfo;

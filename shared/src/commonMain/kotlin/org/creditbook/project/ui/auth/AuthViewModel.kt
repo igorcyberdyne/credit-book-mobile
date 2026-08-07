@@ -18,7 +18,6 @@ sealed interface LoginState {
 }
 
 class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
-
     private val _state = MutableStateFlow<LoginState>(LoginState.Idle)
     val state: StateFlow<LoginState> = _state
 

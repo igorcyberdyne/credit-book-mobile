@@ -11,6 +11,7 @@ import org.creditbook.project.data.repository.TransactionRepository
 import org.creditbook.project.model.Customer
 import org.creditbook.project.model.Money
 import org.creditbook.project.sync.ConnectivityObserver
+import org.creditbook.project.ui.common.error.ErrorDialogState
 
 enum class PaymentMethodOption { CASH, CARD }
 
@@ -99,13 +100,6 @@ class AddPaymentViewModel(
         }
     }
 
-    fun payHalf() {
-        state.value.currentBalance?.let {
-            val half = Money.fromCents(it.cents() / 2)
-            _state.update { s -> s.copy(amountText = half.decimal(), error = null) }
-        }
-    }
-
     fun submit() {
         val current = _state.value
         if (!current.isAmountValid) {
@@ -124,12 +118,8 @@ class AddPaymentViewModel(
                 )
                 _state.update { it.copy(isSubmitting = false, isSubmitted = true) }
             } catch (e: Exception) {
-                _state.update {
-                    it.copy(
-                        isSubmitting = false,
-                        error = e.message ?: "Erreur inattendue"
-                    )
-                }
+                _state.update { it.copy(isSubmitting = false) }
+                ErrorDialogState.show(e.message ?: "Erreur inattendue")
             }
         }
     }

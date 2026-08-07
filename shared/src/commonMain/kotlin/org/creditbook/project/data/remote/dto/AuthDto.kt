@@ -13,6 +13,7 @@ data class RefreshTokenCommand(
     @SerialName("refresh_token")
     val refreshToken: String
 )
+
 @Serializable
 data class UserDto(
     val uuid: String,
@@ -27,5 +28,6 @@ data class LoginResponse(
     val token: String,
     val refreshToken: String,
     val expiresIn: Long,
-    val user: UserDto
+    val user: UserDto,
+    val shop: ShopDto,
 )

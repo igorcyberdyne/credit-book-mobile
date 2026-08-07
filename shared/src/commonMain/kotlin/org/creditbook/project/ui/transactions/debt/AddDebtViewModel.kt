@@ -6,8 +6,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.creditbook.project.data.remote.dto.ApiException
 import org.creditbook.project.data.repository.TransactionRepository
 import org.creditbook.project.model.Money
+import org.creditbook.project.ui.common.error.ErrorDialogState
+import kotlin.text.ifEmpty
 
 data class AddDebtUiState(
     val amountText: String = "",
@@ -59,7 +62,8 @@ class AddDebtViewModel(
                 )
                 _state.update { it.copy(isSubmitting = false, isSubmitted = true) }
             } catch (e: Exception) {
-                _state.update { it.copy(isSubmitting = false, error = e.message ?: "Erreur inattendue") }
+                _state.update { it.copy(isSubmitting = false) }
+                ErrorDialogState.show(e.message ?: "Erreur inattendue")
             }
         }
     }

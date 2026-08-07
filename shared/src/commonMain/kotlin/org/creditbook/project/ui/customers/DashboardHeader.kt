@@ -3,24 +3,50 @@ package org.creditbook.project.ui.customers
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.creditbook.project.model.DashboardStats
+import org.creditbook.project.model.Session
 
 @Composable
 fun DashboardHeader(
     stats: DashboardStats?,
+    session: Session?,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
-        //Text(stats?.shopName ?: "", style = MaterialTheme.typography.titleLarge)
-        Text(stats?.address ?: "", style = MaterialTheme.typography.titleMedium)
-        Text((stats?.city ?: "") + " " + (stats?.postalCode ?: ""), style = MaterialTheme.typography.titleMedium)
+    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            var fullAddress = ""
+            val address = session?.shop?.address ?: ""
+            if (address.isNotEmpty()) {
+                fullAddress = address
+            }
 
+            val postalCode: String = (session?.shop?.city ?: "") + " " + (session?.shop?.postalCode ?: "")
+            if (postalCode.isNotEmpty()) {
+                fullAddress += (if (fullAddress.isNotEmpty()) ", " else "") + postalCode
+            }
+
+            if (fullAddress.isNotEmpty()) {
+                Text(fullAddress.trim(), style = MaterialTheme.typography.titleMedium)
+            }
+
+            if (stats?.isOffline == true) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    Icons.Default.CloudOff,
+                    contentDescription = "Hors-ligne",
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(

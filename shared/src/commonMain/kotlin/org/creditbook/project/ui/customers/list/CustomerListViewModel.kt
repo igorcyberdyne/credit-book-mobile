@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.creditbook.project.data.local.SessionDatabase
 import org.creditbook.project.data.repository.CustomerRepository
 import org.creditbook.project.model.Customer
 import org.creditbook.project.model.DashboardStats
-import org.creditbook.project.model.Money
-
+import org.creditbook.project.model.Session
 
 
 data class CustomerListUiState(
@@ -23,14 +23,20 @@ data class CustomerListUiState(
 
     val stats: DashboardStats? = null,
     val searchQuery: String = "",
+    val session: Session? = null,
 )
 
 class CustomerListViewModel(
-    private val repository: CustomerRepository
+    private val repository: CustomerRepository,
+    private val sessionDatabase: SessionDatabase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CustomerListUiState())
     val state: StateFlow<CustomerListUiState> = _state
+
+    init {
+        _state.update { it.copy(session = sessionDatabase.getCachedSession()) }
+    }
 
     fun loadFirstPage() {
         val current = _state.value
@@ -47,7 +53,6 @@ class CustomerListViewModel(
                     )
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
                 _state.update { it.copy(isLoading = false, error = e.message ?: "Erreur inconnue") }
             }
         }
@@ -90,8 +95,18 @@ class CustomerListViewModel(
             try {
                 val stats = repository.fetchDashboardStats()
                 _state.update { it.copy(stats = stats) }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // Silencieux volontairement : l'absence de stats ne doit pas bloquer la liste
+                // sans les chiffres (total dû, ardoises ouvertes) qui nécessitent le serveur.
+                _state.update {
+                    it.copy(
+                        stats = DashboardStats(
+                            totalDue = null,
+                            customersWithDebtCount = null,
+                            isOffline = true
+                        )
+                    )
+                }
             }
         }
     }

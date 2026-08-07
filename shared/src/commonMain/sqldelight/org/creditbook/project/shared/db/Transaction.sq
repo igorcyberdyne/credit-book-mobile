@@ -9,21 +9,25 @@ CREATE TABLE TransactionEntity (
     paymentMethod TEXT,
     occurredAt TEXT,
     status TEXT NOT NULL,
-    syncAttempts INTEGER NOT NULL DEFAULT 0
+    syncAttempts INTEGER NOT NULL DEFAULT 0,
+    shopUuid TEXT NOT NULL
 );
 
 selectPending:
-SELECT * FROM TransactionEntity WHERE status = 'pending';
+SELECT * FROM TransactionEntity WHERE status = 'pending' AND shopUuid = :shopUuid;
 
 selectForCustomer:
-SELECT * FROM TransactionEntity WHERE customerUuid = :customerUuid AND status IN ('pending', 'error');
+SELECT * FROM TransactionEntity WHERE customerUuid = :customerUuid AND status IN ('pending', 'error') AND shopUuid = :shopUuid;
 
 insertEntry:
-INSERT INTO TransactionEntity(localUuid, customerUuid, type, amountInCents, description, paymentMethod, occurredAt, status, syncAttempts)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+INSERT INTO TransactionEntity(localUuid, customerUuid, type, amountInCents, description, paymentMethod, occurredAt, status, syncAttempts, shopUuid)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 markSynced:
 UPDATE TransactionEntity SET status = 'synced', serverUuid = ? WHERE id = ?;
 
 incrementSyncAttempts:
 UPDATE TransactionEntity SET syncAttempts = syncAttempts + 1 WHERE id = ?;
+
+delete:
+DELETE FROM TransactionEntity WHERE localUuid = :localUuid;

@@ -27,7 +27,6 @@ fun NewCustomerContent(
             keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words
             ),
-            isError = state.error != null,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -49,12 +48,11 @@ fun NewCustomerContent(
         OutlinedTextField(
             value = state.phone,
             onValueChange = onPhoneChange,
-            label = { Text("Téléphone") },
+            label = { Text("Téléphone (optionnel)") },
             singleLine = true,
             keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                 keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone
             ),
-            isError = state.error?.contains("téléphone", ignoreCase = true) == true,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -72,11 +70,6 @@ fun NewCustomerContent(
             state.fieldErrors.forEach {
                 Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
             }
-        }
-
-        state.error?.let {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         }
 
         Spacer(modifier = Modifier.height(24.dp))

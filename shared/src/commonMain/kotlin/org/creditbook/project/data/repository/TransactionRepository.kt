@@ -5,6 +5,8 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import org.creditbook.project.data.local.SessionDatabase
+import org.creditbook.project.data.remote.dto.ApiException
 import org.creditbook.project.data.remote.dto.ApiResponse
 import org.creditbook.project.data.remote.dto.CancelEntryCommand
 import org.creditbook.project.data.remote.dto.CorrectEntryCommand
@@ -18,16 +20,27 @@ import org.creditbook.project.model.TransactionsPage
 import org.creditbook.project.model.toDomain
 import org.creditbook.project.shared.db.AppDatabase
 import org.creditbook.project.sync.ConnectivityObserver
+import org.creditbook.project.ui.common.error.ErrorDialogState
 
 class TransactionRepository(
     private val httpClient: HttpClient,
+    private val connectivityObserver: ConnectivityObserver,
     private val database: AppDatabase,
-    private val connectivityObserver: ConnectivityObserver
+    private val sessionDatabase: SessionDatabase
 ) {
+    private val shopUuid: String
+        get() {
+            val cachedSession = sessionDatabase.getCachedSession()
+
+            return cachedSession.shop.uuid
+        }
+
 
     suspend fun addDebt(customerUuid: String, amount: Money, description: String? = null) {
+        val localUuid: String = uuid4().toString()
+
         database.transactionQueries.insertEntry(
-            localUuid = uuid4().toString(),
+            localUuid = localUuid,
             customerUuid = customerUuid,
             type = TransactionType.DEBT.name,
             amountInCents = amount.cents(),
@@ -35,16 +48,17 @@ class TransactionRepository(
             paymentMethod = null,
             occurredAt = null,
             status = "pending",
-            syncAttempts = 0
+            syncAttempts = 0,
+            shopUuid = shopUuid,
         )
 
-        val allPending = database.transactionQueries.selectPending().executeAsList()
+        val allPending = database.transactionQueries.selectPending(shopUuid).executeAsList()
         println("Après insertEntry, nombre de transactions pending: ${allPending.size}")
         allPending.forEach { println("  -> ${it.localUuid} / ${it.amountInCents} centimes / status=${it.status}") }
 
         val online = connectivityObserver.isOnline()
 
-        if (online) syncPendingTransactions()
+        if (online) syncPendingTransactions(true, localUuid)
     }
 
     suspend fun addPayment(
@@ -53,8 +67,10 @@ class TransactionRepository(
         paymentMethod: String,
         description: String? = null
     ) {
+        val localUuid: String = uuid4().toString()
+
         database.transactionQueries.insertEntry(
-            localUuid = uuid4().toString(),
+            localUuid = localUuid,
             customerUuid = customerUuid,
             type = TransactionType.PAYMENT.name,
             amountInCents = amount.cents(),
@@ -62,9 +78,13 @@ class TransactionRepository(
             paymentMethod = paymentMethod,
             occurredAt = null,
             status = "pending",
-            syncAttempts = 0
+            syncAttempts = 0,
+            shopUuid
         )
-        if (connectivityObserver.isOnline()) syncPendingTransactions()
+
+        val online = connectivityObserver.isOnline()
+
+        if (online) syncPendingTransactions(true, localUuid)
     }
 
     // Route corrigée : /ledgers/{uuid}/correct
@@ -74,7 +94,6 @@ class TransactionRepository(
         description: String? = null,
         paymentMethod: String? = null
     ) {
-        println("----------" + paymentMethod)
         httpClient.post("/api/ledgers/$entryUuid/correct") {
             contentType(ContentType.Application.Json)
             setBody(CorrectEntryCommand(amountInCents, description, paymentMethod))
@@ -94,8 +113,8 @@ class TransactionRepository(
             .body<ApiResponse<TransactionsPageDto>>().data.toDomain()
     }
 
-    suspend fun syncPendingTransactions() {
-        val pending = database.transactionQueries.selectPending().executeAsList()
+    suspend fun syncPendingTransactions(isUserAction: Boolean = false, localUuid: String? = null) {
+        val pending = database.transactionQueries.selectPending(shopUuid).executeAsList()
 
         for (entry in pending) {
             try {
@@ -126,8 +145,13 @@ class TransactionRepository(
                 }.body<ApiResponse<TransactionEntryDto>>().data
 
                 database.transactionQueries.markSynced(response.uuid, entry.id)
-            } catch (e: Exception) {
-                println("Échec de sync pour ${entry.localUuid}: ${e.message}")
+            } catch (e: ApiException) {
+                if (e.code == "###" && isUserAction && localUuid != null && entry.localUuid == localUuid) {
+                    database.transactionQueries.delete(localUuid)
+
+                    throw e
+                }
+            } catch (_: Exception) {
                 database.transactionQueries.incrementSyncAttempts(entry.id)
             }
         }
