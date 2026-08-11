@@ -9,13 +9,10 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import org.creditbook.project.data.remote.dto.ApiException
 import org.creditbook.project.data.remote.dto.CreateDebtCommand
 import org.creditbook.project.data.repository.TransactionRepository
-import org.creditbook.project.lib.formatDate
 import org.creditbook.project.model.Money
 import org.creditbook.project.ui.common.error.ErrorDialogState
-import kotlin.text.ifEmpty
 import kotlin.time.ExperimentalTime
 
 data class AddDebtUiState(
@@ -64,7 +61,8 @@ class AddDebtViewModel(
             _state.update { it.copy(isSubmitting = true, error = null) }
             try {
                 val amount = Money.fromDecimal(current.amountText)
-                val occurredAt = current.occurredAt?.toInstant(TimeZone.currentSystemDefault())?.toString()
+                val occurredAt =
+                    current.occurredAt?.toInstant(TimeZone.currentSystemDefault())?.toString()
 
                 transactionRepository.addDebt(
                     customerUuid = clientUuid,

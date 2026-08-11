@@ -4,7 +4,6 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 private const val KEY_JWT_TOKEN = "jwt_token"
 private const val KEY_JWT_SAVE_AT = "jwt_save_at"

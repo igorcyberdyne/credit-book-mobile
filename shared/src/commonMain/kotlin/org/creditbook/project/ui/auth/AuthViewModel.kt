@@ -2,13 +2,13 @@ package org.creditbook.project.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import org.creditbook.project.data.repository.AuthRepository
-import org.creditbook.project.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.creditbook.project.data.remote.dto.ApiException
+import org.creditbook.project.data.repository.AuthRepository
+import org.creditbook.project.model.User
 
 sealed interface LoginState {
     data object Idle : LoginState

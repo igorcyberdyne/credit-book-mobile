@@ -6,24 +6,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
-
-import androidx.compose.material3.*
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.Modifier
 import org.creditbook.project.lib.fromString
 import org.creditbook.project.ui.customers.EditCustomerScreen
-import org.creditbook.project.ui.customers.list.CustomerListContent
 import org.creditbook.project.ui.transactions.CorrectEntryScreen
 import org.creditbook.project.ui.transactions.debt.AddDebtScreen
 import org.creditbook.project.ui.transactions.payment.AddPaymentScreen
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 data class CustomerDetailScreen(val customerUuid: String) : Screen {
     @Composable

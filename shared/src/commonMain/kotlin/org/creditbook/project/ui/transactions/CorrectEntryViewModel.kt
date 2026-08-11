@@ -11,8 +11,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import org.creditbook.project.data.remote.dto.CorrectEntryCommand
 import org.creditbook.project.data.repository.TransactionRepository
-import org.creditbook.project.lib.formatDate
-import org.creditbook.project.lib.fromString
 import org.creditbook.project.model.Money
 import kotlin.time.ExperimentalTime
 
@@ -72,7 +70,8 @@ class CorrectEntryViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isSubmitting = true, error = null) }
             try {
-                val occurredAt = current.occurredAt?.toInstant(TimeZone.currentSystemDefault())?.toString()
+                val occurredAt =
+                    current.occurredAt?.toInstant(TimeZone.currentSystemDefault())?.toString()
 
                 transactionRepository.correctEntry(
                     entryUuid = entryUuid,
@@ -85,7 +84,12 @@ class CorrectEntryViewModel(
                 )
                 _state.update { it.copy(isSubmitting = false, isSubmitted = true) }
             } catch (e: Exception) {
-                _state.update { it.copy(isSubmitting = false, error = e.message ?: "Erreur inattendue") }
+                _state.update {
+                    it.copy(
+                        isSubmitting = false,
+                        error = e.message ?: "Erreur inattendue"
+                    )
+                }
             }
         }
     }

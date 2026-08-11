@@ -1,18 +1,20 @@
 package org.creditbook.project.data.repository
 
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import org.creditbook.project.data.auth.TokenStorage
-import org.creditbook.project.data.remote.dto.LoginCommand
-import org.creditbook.project.data.remote.dto.LoginResponse
-import org.creditbook.project.model.User
-import org.creditbook.project.model.toDomain
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
 import org.creditbook.project.data.local.SessionDatabase
 import org.creditbook.project.data.remote.dto.ApiResponse
+import org.creditbook.project.data.remote.dto.LoginCommand
+import org.creditbook.project.data.remote.dto.LoginResponse
 import org.creditbook.project.data.remote.dto.OnboardingCommand
 import org.creditbook.project.model.Session
+import org.creditbook.project.model.User
+import org.creditbook.project.model.toDomain
 
 class AuthRepository(
     private val httpClient: HttpClient,

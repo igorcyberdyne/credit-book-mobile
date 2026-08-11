@@ -1,11 +1,13 @@
 package org.creditbook.project.data.repository
 
 import com.benasher44.uuid.uuid4
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.serialization.descriptors.StructureKind
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import org.creditbook.project.data.local.SessionDatabase
 import org.creditbook.project.data.remote.dto.ApiException
 import org.creditbook.project.data.remote.dto.ApiResponse
@@ -16,13 +18,11 @@ import org.creditbook.project.data.remote.dto.CreatePaymentCommand
 import org.creditbook.project.data.remote.dto.TransactionCommand
 import org.creditbook.project.data.remote.dto.TransactionEntryDto
 import org.creditbook.project.data.remote.dto.TransactionsPageDto
-import org.creditbook.project.model.Money
 import org.creditbook.project.model.TransactionType
 import org.creditbook.project.model.TransactionsPage
 import org.creditbook.project.model.toDomain
 import org.creditbook.project.shared.db.AppDatabase
 import org.creditbook.project.sync.ConnectivityObserver
-import org.creditbook.project.ui.common.error.ErrorDialogState
 
 class TransactionRepository(
     private val httpClient: HttpClient,
@@ -132,10 +132,11 @@ class TransactionRepository(
                     )
                 }
 
-                val response = httpClient.post("/api/ledgers/customers/${entry.customerUuid}/$resource") {
-                    contentType(ContentType.Application.Json)
-                    setBody(command)
-                }.body<ApiResponse<TransactionEntryDto>>().data
+                val response =
+                    httpClient.post("/api/ledgers/customers/${entry.customerUuid}/$resource") {
+                        contentType(ContentType.Application.Json)
+                        setBody(command)
+                    }.body<ApiResponse<TransactionEntryDto>>().data
 
                 database.transactionQueries.markSynced(response.uuid, entry.id)
             } catch (e: ApiException) {

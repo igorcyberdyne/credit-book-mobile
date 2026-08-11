@@ -1,19 +1,24 @@
 package org.creditbook.project.data.repository
 
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import org.creditbook.project.data.remote.dto.ApiResponse
 import org.creditbook.project.data.remote.dto.CreateCustomerCommand
 import org.creditbook.project.data.remote.dto.CustomerDto
 import org.creditbook.project.data.remote.dto.CustomersPageDto
-import org.creditbook.project.model.Customer
-import org.creditbook.project.model.CustomersPage
-import org.creditbook.project.model.toDomain
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import org.creditbook.project.data.remote.dto.ApiResponse
 import org.creditbook.project.data.remote.dto.DashboardStatsDto
 import org.creditbook.project.data.remote.dto.UpdateCustomerCommand
+import org.creditbook.project.model.Customer
+import org.creditbook.project.model.CustomersPage
 import org.creditbook.project.model.DashboardStats
+import org.creditbook.project.model.toDomain
 
 class CustomerRepository(
     private val httpClient: HttpClient,

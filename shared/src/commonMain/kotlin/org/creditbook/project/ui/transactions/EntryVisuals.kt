@@ -2,7 +2,13 @@ package org.creditbook.project.ui.transactions
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Undo
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

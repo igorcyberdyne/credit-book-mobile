@@ -3,8 +3,11 @@ package org.creditbook.project.ui.customers
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -13,9 +16,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.benasher44.uuid.uuid4
-import org.creditbook.project.ui.customers.detail.CustomerDetailScreen
-import org.creditbook.project.ui.customers.list.CustomerListContent
-import org.creditbook.project.ui.customers.list.CustomerListViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 class NewCustomerScreen : Screen {
