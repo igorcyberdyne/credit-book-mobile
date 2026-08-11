@@ -1,7 +1,9 @@
 package org.creditbook.project.lib
 
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
@@ -21,12 +23,20 @@ fun formatDate(date: String?): String {
         val year = localDateTime.year
         val hour = localDateTime.hour.toString().padStart(2, '0')
         val minute = localDateTime.minute.toString().padStart(2, '0')
+        var givenDate = "$day/$month/$year"
 
-        val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-        val now = "${currentDate.day}/${currentDate.month.number.toString().padStart(2, '0')}/${currentDate.year}"
+        val todayDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+        val today = "${todayDate.day}/${
+            todayDate.month.number.toString().padStart(2, '0')
+        }/${todayDate.year}"
 
-        var localDate = "$day/$month/$year"
-        localDate = if (now == localDate) "aujourd'hui" else localDate
+        val yesterdayDate = todayDate.minus(1, DateTimeUnit.DAY)
+        val yesterday = "${yesterdayDate.day}/${
+            yesterdayDate.month.number.toString().padStart(2, '0')
+        }/${yesterdayDate.year}"
+
+        val localDate =
+            if (givenDate == today) "aujourd'hui" else if (givenDate == yesterday) "hier" else givenDate
 
         "$localDate à $hour:$minute"
     } catch (_: Exception) {
