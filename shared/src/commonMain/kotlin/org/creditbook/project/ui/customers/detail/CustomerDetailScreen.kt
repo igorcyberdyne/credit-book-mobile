@@ -18,6 +18,7 @@ import org.koin.core.parameter.parametersOf
 import androidx.compose.material3.*
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import org.creditbook.project.lib.fromString
 import org.creditbook.project.ui.customers.EditCustomerScreen
 import org.creditbook.project.ui.customers.list.CustomerListContent
 import org.creditbook.project.ui.transactions.CorrectEntryScreen
@@ -98,6 +99,7 @@ data class CustomerDetailScreen(val customerUuid: String) : Screen {
                                 entryUuid = entry.uuid,
                                 currentAmount = entry.amount,
                                 currentDescription = entry.description,
+                                currentOccurredAt = fromString(entry.occurredAt),
                                 currentPaymentMethod = entry.paymentMethod
                             )
                         )

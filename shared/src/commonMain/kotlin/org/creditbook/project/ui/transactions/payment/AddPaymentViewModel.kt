@@ -6,12 +6,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import org.creditbook.project.data.remote.dto.CreatePaymentCommand
 import org.creditbook.project.data.repository.CustomerRepository
 import org.creditbook.project.data.repository.TransactionRepository
 import org.creditbook.project.model.Customer
 import org.creditbook.project.model.Money
 import org.creditbook.project.sync.ConnectivityObserver
 import org.creditbook.project.ui.common.error.ErrorDialogState
+import kotlin.time.ExperimentalTime
 
 enum class PaymentMethodOption { CASH, CARD }
 
@@ -20,6 +25,7 @@ data class AddPaymentUiState(
     val isOffline: Boolean = false,
     val amountText: String = "",
     val description: String = "",
+    val occurredAt: LocalDateTime? = null,
     val paymentMethod: PaymentMethodOption = PaymentMethodOption.CASH,
     val isLoadingCustomer: Boolean = true,
     val isSubmitting: Boolean = false,
@@ -100,6 +106,11 @@ class AddPaymentViewModel(
         }
     }
 
+    fun onOccurredAtChange(dateTime: LocalDateTime?) {
+        _state.update { it.copy(occurredAt = dateTime) }
+    }
+
+    @OptIn(ExperimentalTime::class)
     fun submit() {
         val current = _state.value
         if (!current.isAmountValid) {
@@ -110,11 +121,15 @@ class AddPaymentViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isSubmitting = true, error = null) }
             try {
+                val occurredAt = current.occurredAt?.toInstant(TimeZone.currentSystemDefault())?.toString()
                 transactionRepository.addPayment(
                     customerUuid = customerUuid,
-                    amount = Money.fromDecimal(current.amountText),
-                    paymentMethod = current.paymentMethod.name,
-                    description = current.description.ifBlank { null }
+                    CreatePaymentCommand(
+                        amountInCents = Money.fromDecimal(current.amountText).cents(),
+                        paymentMethod = current.paymentMethod.name,
+                        description = current.description.ifBlank { null },
+                        occurredAt = occurredAt
+                    )
                 )
                 _state.update { it.copy(isSubmitting = false, isSubmitted = true) }
             } catch (e: Exception) {

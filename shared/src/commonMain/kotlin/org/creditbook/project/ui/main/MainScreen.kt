@@ -43,7 +43,6 @@ object MainScreen : Screen {
     }
 
     fun isTabAtRoot(current: Tab): Boolean {
-        print(current)
         return current is HomeTab || current is ProfileTab || current is SettingsTab
     }
 }

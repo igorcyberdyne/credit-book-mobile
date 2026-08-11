@@ -12,6 +12,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.benasher44.uuid.uuid4
+import kotlinx.datetime.LocalDateTime
 import org.creditbook.project.model.Money
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -20,6 +21,7 @@ class CorrectEntryScreen(
     val entryUuid: String,
     val currentAmount: Money,
     val currentDescription: String?,
+    val currentOccurredAt: LocalDateTime?,
     val currentPaymentMethod: String?
 ) : Screen {
     private val screenKey = uuid4().toString()
@@ -28,7 +30,7 @@ class CorrectEntryScreen(
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = koinViewModel<CorrectEntryViewModel>(key = screenKey) {
-            parametersOf(entryUuid, currentAmount, currentDescription, currentPaymentMethod)
+            parametersOf(entryUuid, currentAmount, currentDescription, currentOccurredAt, currentPaymentMethod)
         }
         val state by viewModel.state.collectAsState()
 
@@ -53,6 +55,7 @@ class CorrectEntryScreen(
                 modifier = androidx.compose.ui.Modifier.padding(padding),
                 onAmountChange = viewModel::onAmountChange,
                 onDescriptionChange = viewModel::onDescriptionChange,
+                onOccurredAtChange = viewModel::onOccurredAtChange,
                 onSubmit = viewModel::submit,
                 onCancel = { navigator.pop() },
             )

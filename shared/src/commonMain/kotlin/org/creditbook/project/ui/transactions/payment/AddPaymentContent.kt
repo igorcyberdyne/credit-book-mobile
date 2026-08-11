@@ -10,14 +10,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.LocalDateTime
 import org.creditbook.project.model.Customer
 import org.creditbook.project.ui.customers.CustomerHeaderContent
+import org.creditbook.project.ui.transactions.OccurredAtPicker
 
 @Composable
 fun AddPaymentContent(
     state: AddPaymentUiState,
     onAmountChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
+    onOccurredAtChange: (LocalDateTime?) -> Unit,
     onPaymentMethodChange: (PaymentMethodOption) -> Unit,
     onPayFull: () -> Unit,
     onSubmit: () -> Unit,
@@ -120,6 +123,13 @@ fun AddPaymentContent(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OccurredAtPicker(
+                occurredAt = state.occurredAt,
+                onOccurredAtChange = onOccurredAtChange
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 

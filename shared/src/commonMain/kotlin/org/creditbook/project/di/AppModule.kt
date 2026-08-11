@@ -47,7 +47,8 @@ val appModule = module {
             entryUuid = params[0],
             initialAmount = params[1],
             initialDescription = params[2],
-            initialPaymentMethod = params[3],
+            initialOccurredAt = params[3],
+            initialPaymentMethod = params[4],
             transactionRepository = get()
         )
     }

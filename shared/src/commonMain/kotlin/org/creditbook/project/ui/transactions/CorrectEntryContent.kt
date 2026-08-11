@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.LocalDateTime
 
 @Composable
 fun CorrectEntryContent(
@@ -14,6 +15,7 @@ fun CorrectEntryContent(
     modifier: Modifier = Modifier,
     onAmountChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
+    onOccurredAtChange: (LocalDateTime?) -> Unit,
     onSubmit: () -> Unit,
     onCancel: () -> Unit
 ) {
@@ -42,6 +44,13 @@ fun CorrectEntryContent(
             Spacer(modifier = Modifier.height(8.dp))
             Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OccurredAtPicker(
+            occurredAt = state.occurredAt,
+            onOccurredAtChange = onOccurredAtChange
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
