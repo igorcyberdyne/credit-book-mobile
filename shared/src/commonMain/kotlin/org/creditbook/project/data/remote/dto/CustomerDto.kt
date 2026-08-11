@@ -42,7 +42,7 @@ data class CustomersPageDto(
 data class CreateCustomerCommand(
     val firstname: String,
     val lastname: String? = null,
-    val phone: String,
+    val phone: String? = null,
     val note: String? = null
 )
 
@@ -50,6 +50,6 @@ data class CreateCustomerCommand(
 data class UpdateCustomerCommand(
     val firstname: String,
     val lastname: String? = null,
-    val phone: String,
+    val phone: String? = null,
     val note: String? = null
 )

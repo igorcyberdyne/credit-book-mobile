@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import org.creditbook.project.data.remote.dto.ApiException
 import org.creditbook.project.data.remote.dto.UpdateCustomerCommand
 import org.creditbook.project.data.repository.CustomerRepository
+import org.creditbook.project.ui.common.error.ErrorDialogState
 
 data class EditCustomerUiState(
     val firstname: String,
@@ -16,12 +17,11 @@ data class EditCustomerUiState(
     val phone: String,
     val note: String,
     val isSubmitting: Boolean = false,
-    val error: String? = null,
+    val firstnameError: String? = null,
     val fieldErrors: List<String> = emptyList(),
     val isSubmitted: Boolean = false
 ) {
-    val isValid: Boolean
-        get() = firstname.isNotBlank() && phone.isNotBlank()
+    val isValid: Boolean get() = firstname.isNotBlank()
 }
 
 class EditCustomerViewModel(
@@ -44,7 +44,7 @@ class EditCustomerViewModel(
     val state: StateFlow<EditCustomerUiState> = _state
 
     fun onFirstnameChange(value: String) {
-        _state.update { it.copy(firstname = value, error = null) }
+        _state.update { it.copy(firstname = value, firstnameError = null) }
     }
 
     fun onLastnameChange(value: String) {
@@ -64,9 +64,8 @@ class EditCustomerViewModel(
         if (!current.isValid) {
             _state.update {
                 it.copy(
-                    error = when {
+                    firstnameError = when {
                         current.firstname.isBlank() -> "Le prénom est obligatoire"
-                        current.phone.isBlank() -> "Le téléphone est obligatoire"
                         else -> null
                     }
                 )
@@ -75,14 +74,20 @@ class EditCustomerViewModel(
         }
 
         viewModelScope.launch {
-            _state.update { it.copy(isSubmitting = true, error = null, fieldErrors = emptyList()) }
+            _state.update {
+                it.copy(
+                    isSubmitting = true,
+                    firstnameError = null,
+                    fieldErrors = emptyList()
+                )
+            }
             try {
                 customerRepository.updateCustomer(
                     uuid = clientUuid,
                     UpdateCustomerCommand(
                         firstname = current.firstname.trim(),
                         lastname = current.lastname.trim().ifBlank { null },
-                        phone = current.phone.trim(),
+                        phone = current.phone.trim().ifBlank { null },
                         note = current.note.trim().ifBlank { null }
                     )
                 )
@@ -91,12 +96,14 @@ class EditCustomerViewModel(
                 _state.update {
                     it.copy(
                         isSubmitting = false,
-                        error = if (e.details.isEmpty()) e.message else null,
                         fieldErrors = e.details
                     )
                 }
+
+                ErrorDialogState.show(e.message.ifEmpty { "Impossible de modifier le client" })
             } catch (_: Exception) {
-                _state.update { it.copy(isSubmitting = false, error = "Impossible de modifier le client") }
+                _state.update { it.copy(isSubmitting = false) }
+                ErrorDialogState.show("Impossible de modifier le client")
             }
         }
     }

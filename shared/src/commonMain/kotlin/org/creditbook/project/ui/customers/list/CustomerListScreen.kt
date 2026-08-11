@@ -41,7 +41,7 @@ object CustomerListScreen : Screen {
 
         Scaffold(
             topBar = {
-                TopAppBar(title = { Text("Clients") })
+                TopAppBar(title = { Text(state.session?.shop?.name ?: "Clients") })
             },
             floatingActionButton = {
                 ExtendedFloatingActionButton(

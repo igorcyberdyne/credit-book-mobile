@@ -7,7 +7,8 @@ enum class Currency(val symbol: String) {
     USD("$"),
     CD("FC"),
     XOF("CFA"),
-    XAF("FCFA")
+    XAF("FCFA"),
+    Currency("D")
 }
 
 data class Money private constructor(

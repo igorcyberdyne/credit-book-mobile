@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import org.creditbook.project.data.remote.dto.ApiException
 import org.creditbook.project.data.remote.dto.CreateCustomerCommand
 import org.creditbook.project.data.repository.CustomerRepository
+import org.creditbook.project.ui.common.error.ErrorDialogState
 
 data class NewCustomerUiState(
     val firstname: String = "",
@@ -16,12 +17,11 @@ data class NewCustomerUiState(
     val phone: String = "",
     val note: String = "",
     val isSubmitting: Boolean = false,
-    val error: String? = null,
+    val firstnameError: String? = null,
     val fieldErrors: List<String> = emptyList(),
     val isSubmitted: Boolean = false
 ) {
-    val isValid: Boolean
-        get() = firstname.isNotBlank() && phone.isNotBlank()
+    val isValid: Boolean get() = firstname.isNotBlank()
 }
 
 class NewCustomerViewModel(
@@ -32,7 +32,7 @@ class NewCustomerViewModel(
     val state: StateFlow<NewCustomerUiState> = _state
 
     fun onFirstnameChange(value: String) {
-        _state.update { it.copy(firstname = value, error = null) }
+        _state.update { it.copy(firstname = value, firstnameError = null) }
     }
 
     fun onLastnameChange(value: String) {
@@ -40,7 +40,7 @@ class NewCustomerViewModel(
     }
 
     fun onPhoneChange(value: String) {
-        _state.update { it.copy(phone = value, error = null) }
+        _state.update { it.copy(phone = value) }
     }
 
     fun onNoteChange(value: String) {
@@ -52,9 +52,8 @@ class NewCustomerViewModel(
         if (!current.isValid) {
             _state.update {
                 it.copy(
-                    error = when {
+                    firstnameError = when {
                         current.firstname.isBlank() -> "Le prénom est obligatoire"
-                        current.phone.isBlank() -> "Le téléphone est obligatoire"
                         else -> null
                     }
                 )
@@ -63,13 +62,19 @@ class NewCustomerViewModel(
         }
 
         viewModelScope.launch {
-            _state.update { it.copy(isSubmitting = true, error = null, fieldErrors = emptyList()) }
+            _state.update {
+                it.copy(
+                    isSubmitting = true,
+                    firstnameError = null,
+                    fieldErrors = emptyList()
+                )
+            }
             try {
                 customerRepository.createCustomer(
                     CreateCustomerCommand(
                         firstname = current.firstname.trim(),
                         lastname = current.lastname.trim().ifBlank { null },
-                        phone = current.phone.trim(),
+                        phone = current.phone.trim().ifBlank { null },
                         note = current.note.trim().ifBlank { null }
                     )
                 )
@@ -78,17 +83,13 @@ class NewCustomerViewModel(
                 _state.update {
                     it.copy(
                         isSubmitting = false,
-                        error = if (e.details.isEmpty()) e.message else null,
                         fieldErrors = e.details
                     )
                 }
-            } catch (e: Exception) {
-                _state.update {
-                    it.copy(
-                        isSubmitting = false,
-                        error = "Impossible de créer le client, vérifiez votre connexion"
-                    )
-                }
+                ErrorDialogState.show(e.message.ifEmpty { "Impossible de créer le client" })
+            } catch (_: Exception) {
+                _state.update { it.copy(isSubmitting = false) }
+                ErrorDialogState.show("Impossible de créer le client")
             }
         }
     }

@@ -15,6 +15,7 @@ import org.koin.compose.koinInject
 fun ProfileScreen() {
     val authRepository = koinInject<AuthRepository>()
     val scope = rememberCoroutineScope()
+    val session = remember { authRepository.getCachedSession() }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Profil") }) }
@@ -23,6 +24,12 @@ fun ProfileScreen() {
             modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            session.let {
+                Text(it.user.let { u -> "${u.firstName} ${u.lastName}" })
+                Text(it.shop.name)
+                Text("${it.shop.address}, ${it.shop.postalCode} ${it.shop.city}")
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(

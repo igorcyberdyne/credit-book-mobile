@@ -1,6 +1,7 @@
 package org.creditbook.project.di
 
 import org.creditbook.project.data.auth.TokenStorage
+import org.creditbook.project.data.local.SessionDatabase
 import org.creditbook.project.data.remote.createHttpClient
 import org.creditbook.project.data.repository.AuthRepository
 import org.creditbook.project.data.repository.CustomerRepository
@@ -10,6 +11,7 @@ import org.creditbook.project.ui.customers.EditCustomerViewModel
 import org.creditbook.project.ui.customers.NewCustomerViewModel
 import org.creditbook.project.ui.customers.detail.CustomerDetailViewModel
 import org.creditbook.project.ui.customers.list.CustomerListViewModel
+import org.creditbook.project.ui.onboarding.OnboardingViewModel
 import org.creditbook.project.ui.transactions.CorrectEntryViewModel
 import org.creditbook.project.ui.transactions.debt.AddDebtViewModel
 import org.creditbook.project.ui.transactions.payment.AddPaymentViewModel
@@ -19,7 +21,7 @@ val appModule = module {
     single { TokenStorage(get()) }
     single {
         createHttpClient(
-            baseUrl = "https://creditbook.ekolotech.fr",
+            baseUrl = "http://localhost:8080",
             tokenStorage = get(),
             onUnauthorized = {
                 get<AuthRepository>().logout()
@@ -29,13 +31,14 @@ val appModule = module {
             }
         )
     }
-    single { AuthRepository(get(), get()) }
+    single { SessionDatabase(get()) }
+    single { AuthRepository(get(), get(), get()) }
     single { CustomerRepository(get()) }
-    single { TransactionRepository(get(), get(), get()) }
+    single { TransactionRepository(get(), get(), get(), get()) }
 
     factory { AuthViewModel(get()) }
     factory { NewCustomerViewModel(get()) }
-    factory { CustomerListViewModel(get()) }
+    factory { CustomerListViewModel(get(), get()) }
     factory { (clientUuid: String) -> CustomerDetailViewModel(clientUuid, get(), get()) }
     factory { (clientUuid: String) -> AddDebtViewModel(clientUuid, get()) }
     factory { (clientUuid: String) -> AddPaymentViewModel(clientUuid, get(), get(), get()) }
@@ -58,4 +61,5 @@ val appModule = module {
             customerRepository = get()
         )
     }
+    factory { OnboardingViewModel(get()) }
 }

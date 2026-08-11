@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,12 +29,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.creditbook.project.model.User
+import org.creditbook.project.ui.onboarding.OnboardingScreen
 
 
 @Composable
 fun LoginContent(
     viewModel: AuthViewModel,
-    onLoginSuccess: (User) -> Unit
+    onLoginSuccess: (User) -> Unit,
+    onOnboardingUser: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -117,6 +120,13 @@ fun LoginContent(
                 } else {
                     Text("Se connecter")
                 }
+            }
+
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            TextButton(onClick = onOnboardingUser) {
+                Text("Pas encore de compte ? Créer mon commerce")
             }
         }
     }
