@@ -32,6 +32,7 @@ import org.creditbook.project.model.CurrentCurrency
 import org.creditbook.project.model.Customer
 import org.creditbook.project.ui.common.LimitedTextField
 import org.creditbook.project.ui.common.OccurredAtPicker
+import org.creditbook.project.ui.common.dismissKeyboardOnTap
 import org.creditbook.project.ui.customers.CustomerHeaderContent
 
 @Composable
@@ -51,6 +52,7 @@ fun AddPaymentContent(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .dismissKeyboardOnTap()
             .padding(16.dp)
     ) {
         if (state.isOffline) {

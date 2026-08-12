@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import org.creditbook.project.ui.common.LimitedTextField
+import org.creditbook.project.ui.common.dismissKeyboardOnTap
 
 @Composable
 fun NewCustomerContent(
@@ -33,6 +34,7 @@ fun NewCustomerContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .dismissKeyboardOnTap()
             .padding(16.dp)
     ) {
 

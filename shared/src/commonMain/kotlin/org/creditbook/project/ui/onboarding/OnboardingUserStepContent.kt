@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import org.creditbook.project.ui.common.LimitedTextField
+import org.creditbook.project.ui.common.dismissKeyboardOnTap
 
 @Composable
 fun OnboardingUserStepContent(
@@ -39,6 +40,7 @@ fun OnboardingUserStepContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .dismissKeyboardOnTap()
             .padding(16.dp)
     ) {
         LinearProgressIndicator(progress = { 1f }, modifier = Modifier.fillMaxWidth())

@@ -24,6 +24,7 @@ import kotlinx.datetime.LocalDateTime
 import org.creditbook.project.model.CurrentCurrency
 import org.creditbook.project.ui.common.LimitedTextField
 import org.creditbook.project.ui.common.OccurredAtPicker
+import org.creditbook.project.ui.common.dismissKeyboardOnTap
 
 @Composable
 fun CorrectEntryContent(
@@ -38,6 +39,7 @@ fun CorrectEntryContent(
     Column(
         modifier = modifier.fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .dismissKeyboardOnTap()
             .padding(16.dp)
     ) {
         OutlinedTextField(

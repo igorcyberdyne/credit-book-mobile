@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.creditbook.project.model.Currency
 import org.creditbook.project.ui.common.LimitedTextField
+import org.creditbook.project.ui.common.dismissKeyboardOnTap
 
 
 private val currencyOptions = listOf(
@@ -98,6 +99,7 @@ fun OnboardingShopStepContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .dismissKeyboardOnTap()
             .padding(16.dp)
     ) {
         LinearProgressIndicator(progress = { 0.5f }, modifier = Modifier.fillMaxWidth())
