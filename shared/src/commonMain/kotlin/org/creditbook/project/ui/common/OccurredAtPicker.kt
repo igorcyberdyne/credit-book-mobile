@@ -1,4 +1,4 @@
-package org.creditbook.project.ui.transactions
+package org.creditbook.project.ui.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

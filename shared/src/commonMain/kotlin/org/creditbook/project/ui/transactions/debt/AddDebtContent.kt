@@ -22,8 +22,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
 import org.creditbook.project.model.Customer
+import org.creditbook.project.ui.common.OccurredAtPicker
 import org.creditbook.project.ui.customers.CustomerHeaderContent
-import org.creditbook.project.ui.transactions.OccurredAtPicker
 
 @Composable
 fun AddDebtContent(
@@ -61,7 +61,6 @@ fun AddDebtContent(
                 value = state.description,
                 onValueChange = onDescriptionChange,
                 label = { Text("Description (optionnel)") },
-                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 

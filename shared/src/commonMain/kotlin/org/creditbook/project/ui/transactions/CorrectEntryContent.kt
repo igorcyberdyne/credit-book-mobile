@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
+import org.creditbook.project.ui.common.OccurredAtPicker
 
 @Composable
 fun CorrectEntryContent(
@@ -47,7 +48,6 @@ fun CorrectEntryContent(
             value = state.description,
             onValueChange = onDescriptionChange,
             label = { Text("Description (optionnel)") },
-            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 

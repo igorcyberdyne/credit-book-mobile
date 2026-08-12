@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import org.creditbook.project.data.remote.dto.ApiException
 import org.creditbook.project.data.remote.dto.CreateCustomerCommand
 import org.creditbook.project.data.repository.CustomerRepository
+import org.creditbook.project.model.Customer
 import org.creditbook.project.ui.common.error.ErrorDialogState
 
 data class NewCustomerUiState(
@@ -19,7 +20,7 @@ data class NewCustomerUiState(
     val isSubmitting: Boolean = false,
     val firstnameError: String? = null,
     val fieldErrors: List<String> = emptyList(),
-    val isSubmitted: Boolean = false
+    val customer: Customer? = null
 ) {
     val isValid: Boolean get() = firstname.isNotBlank()
 }
@@ -70,7 +71,7 @@ class NewCustomerViewModel(
                 )
             }
             try {
-                customerRepository.createCustomer(
+                val customer = customerRepository.createCustomer(
                     CreateCustomerCommand(
                         firstname = current.firstname.trim(),
                         lastname = current.lastname.trim().ifBlank { null },
@@ -78,7 +79,7 @@ class NewCustomerViewModel(
                         note = current.note.trim().ifBlank { null }
                     )
                 )
-                _state.update { it.copy(isSubmitting = false, isSubmitted = true) }
+                _state.update { it.copy(isSubmitting = false, customer = customer) }
             } catch (e: ApiException) {
                 _state.update {
                     it.copy(
