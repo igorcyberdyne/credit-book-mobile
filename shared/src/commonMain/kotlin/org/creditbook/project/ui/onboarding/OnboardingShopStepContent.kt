@@ -28,14 +28,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import org.creditbook.project.model.Currency
+import org.creditbook.project.ui.common.LimitedTextField
+import org.creditbook.project.ui.common.dismissKeyboardOnTap
 
 
 private val currencyOptions = listOf(
-    "EURO" to "Euro (€)",
-    "USD" to "Dollar US ($)",
-    "CD" to "Franc congolais (FC)",
-    "XOF" to "Franc CFA (XOF)",
-    "XAF" to "Franc CFA (XAF)"
+    Currency.EURO.code to "Euro (€)",
+    Currency.USD.code to "Dollar US ($)",
+    Currency.XOF.code to "Franc CFA (XOF)",
+    Currency.XAF.code to "Franc CFA (XAF)",
+    Currency.CD.code to "Franc Congolais (FC)"
 )
 
 
@@ -96,6 +99,7 @@ fun OnboardingShopStepContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .dismissKeyboardOnTap()
             .padding(16.dp)
     ) {
         LinearProgressIndicator(progress = { 0.5f }, modifier = Modifier.fillMaxWidth())
@@ -104,30 +108,34 @@ fun OnboardingShopStepContent(
         Text("Parlez-nous de votre commerce", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.shopName, onValueChange = onShopNameChange,
-            label = { Text("Nom du commerce") }, singleLine = true,
+            label = "Nom du commerce", singleLine = true,
+            maxLength = 50,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.address, onValueChange = onAddressChange,
-            label = { Text("Adresse") }, singleLine = true,
+            label = "Adresse", singleLine = true,
+            maxLength = 100,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(
+            LimitedTextField(
                 value = state.postalCode, onValueChange = onPostalCodeChange,
-                label = { Text("Code postal") }, singleLine = true,
+                label = "Code postal", singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                maxLength = 10,
                 modifier = Modifier.weight(1f)
             )
-            OutlinedTextField(
+            LimitedTextField(
                 value = state.city, onValueChange = onCityChange,
-                label = { Text("Ville") }, singleLine = true,
+                label = "Ville", singleLine = true,
+                maxLength = 50,
                 modifier = Modifier.weight(2f)
             )
         }
@@ -140,10 +148,11 @@ fun OnboardingShopStepContent(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.shopPhone, onValueChange = onShopPhoneChange,
-            label = { Text("Téléphone du commerce") }, singleLine = true,
+            label = "Téléphone du commerce", singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            maxLength = 20,
             modifier = Modifier.fillMaxWidth()
         )
 

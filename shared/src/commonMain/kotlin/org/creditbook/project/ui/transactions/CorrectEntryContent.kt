@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
+import org.creditbook.project.model.CurrentCurrency
+import org.creditbook.project.ui.common.LimitedTextField
+import org.creditbook.project.ui.common.OccurredAtPicker
+import org.creditbook.project.ui.common.dismissKeyboardOnTap
 
 @Composable
 fun CorrectEntryContent(
@@ -30,11 +36,16 @@ fun CorrectEntryContent(
     onSubmit: () -> Unit,
     onCancel: () -> Unit
 ) {
-    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .dismissKeyboardOnTap()
+            .padding(16.dp)
+    ) {
         OutlinedTextField(
             value = state.amountText,
             onValueChange = onAmountChange,
-            label = { Text("Montant (€)") },
+            label = { Text("Montant (" + CurrentCurrency.value.symbol + ")") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             isError = state.error != null,
             singleLine = true,
@@ -43,11 +54,11 @@ fun CorrectEntryContent(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.description,
             onValueChange = onDescriptionChange,
-            label = { Text("Description (optionnel)") },
-            singleLine = true,
+            label = "Description (optionnel)",
+            maxLength = 255,
             modifier = Modifier.fillMaxWidth()
         )
 

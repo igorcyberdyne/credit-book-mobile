@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import org.creditbook.project.model.User
+import org.creditbook.project.ui.common.dismissKeyboardOnTap
 
 
 @Composable
@@ -52,7 +53,9 @@ fun LoginContent(
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .dismissKeyboardOnTap(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(

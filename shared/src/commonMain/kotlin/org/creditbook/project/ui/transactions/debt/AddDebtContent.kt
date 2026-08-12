@@ -21,9 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
+import org.creditbook.project.model.CurrentCurrency
 import org.creditbook.project.model.Customer
+import org.creditbook.project.ui.common.LimitedTextField
+import org.creditbook.project.ui.common.OccurredAtPicker
+import org.creditbook.project.ui.common.dismissKeyboardOnTap
 import org.creditbook.project.ui.customers.CustomerHeaderContent
-import org.creditbook.project.ui.transactions.OccurredAtPicker
 
 @Composable
 fun AddDebtContent(
@@ -39,6 +42,7 @@ fun AddDebtContent(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .dismissKeyboardOnTap()
             .padding(16.dp)
     ) {
         // En-tête customer
@@ -48,7 +52,7 @@ fun AddDebtContent(
             OutlinedTextField(
                 value = state.amountText,
                 onValueChange = onAmountChange,
-                label = { Text("Montant (€)") },
+                label = { Text("Montant (" + CurrentCurrency.value.symbol + ")") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 isError = state.error != null,
                 singleLine = true,
@@ -57,11 +61,11 @@ fun AddDebtContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
+            LimitedTextField(
                 value = state.description,
                 onValueChange = onDescriptionChange,
-                label = { Text("Description (optionnel)") },
-                singleLine = true,
+                label = "Description (optionnel)",
+                maxLength = 255,
                 modifier = Modifier.fillMaxWidth()
             )
 

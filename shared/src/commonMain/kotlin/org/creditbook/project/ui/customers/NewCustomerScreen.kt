@@ -16,6 +16,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.benasher44.uuid.uuid4
+import org.creditbook.project.ui.transactions.debt.AddDebtScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 class NewCustomerScreen : Screen {
@@ -28,9 +29,12 @@ class NewCustomerScreen : Screen {
         val viewModel = koinViewModel<NewCustomerViewModel>(key = screenKey)
         val state by viewModel.state.collectAsState()
 
-        LaunchedEffect(state.isSubmitted) {
-            if (state.isSubmitted) {
-                navigator.pop()
+        LaunchedEffect(state.customer) {
+            state.customer?.let { customer ->
+                // Remplace l'écran de création par l'ajout de dette :
+                // un retour depuis AddDebtScreen ramène directement à la liste,
+                // pas à un formulaire de création vide.
+                navigator.replace(AddDebtScreen(customer.uuid, customer))
             }
         }
 

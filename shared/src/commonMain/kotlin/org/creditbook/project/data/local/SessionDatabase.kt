@@ -1,12 +1,13 @@
 package org.creditbook.project.data.local
 
 import org.creditbook.project.data.remote.dto.LoginResponse
+import org.creditbook.project.model.CurrentCurrency
 import org.creditbook.project.model.Session
 import org.creditbook.project.model.Shop
 import org.creditbook.project.model.User
 import org.creditbook.project.shared.db.AppDatabase
 
-class SessionDatabase (
+class SessionDatabase(
     private val database: AppDatabase
 ) {
     fun hasSession(): Boolean {
@@ -22,6 +23,7 @@ class SessionDatabase (
             email = response.user.email,
             firstName = response.user.firstName,
             lastName = response.user.lastName,
+            phone = response.user.phone,
             roles = response.user.roles.joinToString(","),
             shopUuid = response.shop.uuid,
             shopName = response.shop.name,
@@ -32,6 +34,8 @@ class SessionDatabase (
             shopPhone = response.shop.phone,
             shopCurrency = response.shop.currency
         )
+
+        CurrentCurrency.set(response.shop.currency ?: "X")
     }
 
     fun getCachedSession(): Session {
@@ -43,6 +47,7 @@ class SessionDatabase (
                 email = row.email,
                 firstName = row.firstName,
                 lastName = row.lastName,
+                phone = row.phone,
                 roles = row.roles.split(",")
             ),
             shop = Shop(
