@@ -35,9 +35,9 @@ fun ProfileScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             session.let {
-                Text(it.user.let { u -> "${u.firstName} ${u.lastName}" })
+                Text(it.user.displayName)
                 Text(it.shop.name)
-                Text("${it.shop.address}, ${it.shop.postalCode} ${it.shop.city}")
+                Text(it.shop.displayAddress)
             }
 
             Spacer(modifier = Modifier.height(24.dp))

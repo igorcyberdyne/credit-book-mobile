@@ -143,7 +143,7 @@ class TransactionRepository(
                 if (isUserAction && localUuid != null && entry.localUuid == localUuid) {
                     database.transactionQueries.delete(localUuid)
 
-                    if (e.code != "###") {
+                    if (!e.isBusinessException()) {
                         throw ApiException(
                             code = e.code,
                             message = "Impossible d’enregistrer l’opération pour le moment. Veuillez réessayer ultérieurement.",

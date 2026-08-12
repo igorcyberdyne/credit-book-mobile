@@ -21,7 +21,7 @@ val appModule = module {
     single { TokenStorage(get()) }
     single {
         createHttpClient(
-            baseUrl = "http://localhost:8080",
+            baseUrl = "https://creditbook.ekolotech.fr",
             tokenStorage = get(),
             onUnauthorized = {
                 get<AuthRepository>().logout()

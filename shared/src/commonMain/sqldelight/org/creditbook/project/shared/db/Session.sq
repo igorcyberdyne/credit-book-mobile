@@ -3,7 +3,7 @@ CREATE TABLE SessionInfo (
     userUuid TEXT NOT NULL,
     email TEXT NOT NULL,
     firstName TEXT NOT NULL,
-    lastName TEXT NOT NULL,
+    lastName TEXT,
     roles TEXT NOT NULL,           -- rôles concaténés séparés par une virgule
     shopUuid TEXT NOT NULL,
     shopName TEXT NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE SessionInfo (
     shopCity TEXT,
     shopCountry TEXT,
     shopPhone TEXT,
-    shopCurrency TEXT NOT NULL
+    shopCurrency TEXT
 );
 
 selectSession:

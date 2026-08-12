@@ -32,4 +32,8 @@ class ApiException(
     val code: String,
     override val message: String,
     val details: List<String> = emptyList()
-) : Exception(message)
+) : Exception(message) {
+    fun isBusinessException(): Boolean {
+        return code == "###"
+    }
+}

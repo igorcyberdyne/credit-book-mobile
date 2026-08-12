@@ -35,19 +35,8 @@ fun DashboardHeader(
 ) {
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            var fullAddress = ""
-            val address = session?.shop?.address ?: ""
-            if (address.isNotEmpty()) {
-                fullAddress = address
-            }
-
-            val postalCode: String =
-                (session?.shop?.city ?: "") + " " + (session?.shop?.postalCode ?: "")
-            if (postalCode.isNotEmpty()) {
-                fullAddress += (if (fullAddress.isNotEmpty()) ", " else "") + postalCode
-            }
-
-            if (fullAddress.isNotEmpty()) {
+            val fullAddress = session?.shop?.displayAddress
+            if (fullAddress?.isNotEmpty() ?: false) {
                 Text(fullAddress.trim(), style = MaterialTheme.typography.titleMedium)
             }
 

@@ -10,6 +10,7 @@ import kotlinx.datetime.TimeZone
 import org.creditbook.project.data.remote.dto.ApiException
 import org.creditbook.project.data.remote.dto.OnboardingCommand
 import org.creditbook.project.data.repository.AuthRepository
+import org.creditbook.project.ui.common.error.ErrorDialogState
 
 enum class OnboardingStep { SHOP, USER }
 
@@ -65,10 +66,11 @@ class OnboardingViewModel(
 
     fun onFirstnameChange(v: String) = _state.update { it.copy(firstname = v, error = null) }
     fun onLastnameChange(v: String) = _state.update { it.copy(lastname = v) }
-    fun onEmailChange(v: String) = _state.update { it.copy(email = v, error = null) }
+    fun onEmailChange(v: String) = _state.update { it.copy(email = v) }
     fun onPhoneChange(v: String) = _state.update { it.copy(phone = v) }
     fun onPasswordChange(v: String) = _state.update { it.copy(password = v, error = null) }
-    fun onPasswordConfirmChange(v: String) = _state.update { it.copy(passwordConfirm = v, error = null) }
+    fun onPasswordConfirmChange(v: String) =
+        _state.update { it.copy(passwordConfirm = v, error = null) }
 
     fun goToUserStep() {
         if (_state.value.isShopStepValid) {
@@ -104,31 +106,32 @@ class OnboardingViewModel(
                 authRepository.onboard(
                     OnboardingCommand(
                         shopName = current.shopName.trim(),
-                        address = current.address.trim(),
-                        postalCode = current.postalCode.trim(),
-                        city = current.city.trim(),
+                        address = current.address.trim().ifBlank { null },
+                        postalCode = current.postalCode.trim().ifBlank { null },
+                        city = current.city.trim().ifBlank { null },
                         country = current.country.trim(),
-                        shopPhone = current.shopPhone.trim(),
-                        currency = current.currency,
-                        timezone = current.timezone,
+                        shopPhone = current.shopPhone.trim().ifBlank { null },
+                        currency = current.currency.ifBlank { null },
+                        timezone = current.timezone.ifBlank { null },
                         firstname = current.firstname.trim(),
                         lastname = current.lastname.trim().ifBlank { null },
                         email = current.email.trim(),
-                        phone = current.phone.trim(),
+                        phone = current.phone.trim().ifBlank { null },
                         password = current.password
                     )
                 )
                 _state.update { it.copy(isSubmitting = false, isCompleted = true) }
             } catch (e: ApiException) {
-                _state.update {
-                    it.copy(
-                        isSubmitting = false,
-                        error = if (e.details.isEmpty()) e.message else null,
-                        fieldErrors = e.details
-                    )
+                _state.update { it.copy(isSubmitting = false) }
+
+                var message = ""
+                if (e.isBusinessException()) {
+                    message = e.message
                 }
-            } catch (e: Exception) {
-                _state.update { it.copy(isSubmitting = false, error = "Impossible de créer le compte, vérifiez votre connexion") }
+                ErrorDialogState.show(message.ifEmpty { "Une erreur s’est produite. Veuillez réessayer ultérieurement." })
+            } catch (_: Exception) {
+                _state.update { it.copy(isSubmitting = false) }
+                ErrorDialogState.show("Une erreur s’est produite. Veuillez réessayer ultérieurement.")
             }
         }
     }
