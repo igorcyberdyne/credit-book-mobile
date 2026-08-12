@@ -1,23 +1,20 @@
 package org.creditbook.project.ui.main
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
-import cafe.adriel.voyager.navigator.tab.TabNavigator
-
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.*
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.navigator.CurrentScreen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.tab.CurrentTab
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
+import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.coroutines.launch
 
 object MainScreen : Screen {
@@ -43,10 +40,10 @@ object MainScreen : Screen {
     }
 
     fun isTabAtRoot(current: Tab): Boolean {
-        print(current)
         return current is HomeTab || current is ProfileTab || current is SettingsTab
     }
 }
+
 @Composable
 private fun AppBottomBar() {
     val tabNavigator = LocalTabNavigator.current
@@ -66,7 +63,14 @@ private fun AppBottomBar() {
                         tabNavigator.current = tab
                     }
                 },
-                icon = { tab.options.icon?.let { Icon(painter = it, contentDescription = tab.options.title) } },
+                icon = {
+                    tab.options.icon?.let {
+                        Icon(
+                            painter = it,
+                            contentDescription = tab.options.title
+                        )
+                    }
+                },
                 label = { Text(tab.options.title) }
             )
         }

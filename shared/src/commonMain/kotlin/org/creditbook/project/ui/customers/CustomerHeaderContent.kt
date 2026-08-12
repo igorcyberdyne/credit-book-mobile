@@ -1,22 +1,15 @@
 package org.creditbook.project.ui.customers
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.creditbook.project.model.Customer
 
-data class CustomerHeader (
+data class CustomerHeader(
     val initials: String,
     val displayName: String,
     val phone: String?,
@@ -36,7 +29,7 @@ data class CustomerHeader (
 }
 
 @Composable
-fun CustomerHeaderContent (
+fun CustomerHeaderContent(
     customer: Customer?
 ) {
     // En-tête customer
@@ -61,7 +54,11 @@ fun CustomerHeaderContent (
         Spacer(modifier = Modifier.height(8.dp))
         Text(customer.displayName, style = MaterialTheme.typography.titleLarge)
         customer.phone?.let {
-            Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                it,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))

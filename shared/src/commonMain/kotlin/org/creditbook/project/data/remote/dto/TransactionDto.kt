@@ -60,12 +60,15 @@ data class TransactionsPageDto(
     val entries: List<TransactionEntryDto>,
     val pagination: PaginationDto
 )
+
+interface TransactionCommand;
+
 @Serializable
 data class CreateDebtCommand(
     val amountInCents: Long,
     val description: String? = null,
     val occurredAt: String? = null
-)
+): TransactionCommand
 
 @Serializable
 data class CreatePaymentCommand(
@@ -73,13 +76,14 @@ data class CreatePaymentCommand(
     val paymentMethod: String,
     val description: String? = null,
     val occurredAt: String? = null
-)
+): TransactionCommand
 
 @Serializable
 data class CorrectEntryCommand(
     val amountInCents: Long,
     val description: String? = null,
-    val paymentMethod: String? = null
+    val paymentMethod: String? = null,
+    val occurredAt: String? = null
 )
 
 @Serializable

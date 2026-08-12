@@ -8,6 +8,7 @@ data class LoginCommand(
     val email: String,
     val password: String
 )
+
 @Serializable
 data class RefreshTokenCommand(
     @SerialName("refresh_token")
@@ -19,7 +20,7 @@ data class UserDto(
     val uuid: String,
     val email: String,
     val firstName: String,
-    val lastName: String,
+    val lastName: String?,
     val roles: List<String>
 )
 

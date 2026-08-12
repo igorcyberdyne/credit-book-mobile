@@ -6,15 +6,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.creditbook.project.data.remote.dto.ApiException
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import org.creditbook.project.data.remote.dto.CreateDebtCommand
 import org.creditbook.project.data.repository.TransactionRepository
 import org.creditbook.project.model.Money
 import org.creditbook.project.ui.common.error.ErrorDialogState
-import kotlin.text.ifEmpty
+import kotlin.time.ExperimentalTime
 
 data class AddDebtUiState(
     val amountText: String = "",
     val description: String = "",
+    val occurredAt: LocalDateTime? = null,
     val isSubmitting: Boolean = false,
     val error: String? = null,
     val isSubmitted: Boolean = false
@@ -41,9 +45,12 @@ class AddDebtViewModel(
         _state.update { it.copy(description = value) }
     }
 
-    fun submit() {
-        println("submit() appelé, montant=${_state.value.amountText}, valide=${_state.value.isAmountValid}")
+    fun onOccurredAtChange(dateTime: LocalDateTime?) {
+        _state.update { it.copy(occurredAt = dateTime) }
+    }
 
+    @OptIn(ExperimentalTime::class)
+    fun submit() {
         val current = _state.value
         if (!current.isAmountValid) {
             _state.update { it.copy(error = "Montant invalide") }
@@ -51,14 +58,19 @@ class AddDebtViewModel(
         }
 
         viewModelScope.launch {
-            println("Entrée dans le coroutine de submit")
             _state.update { it.copy(isSubmitting = true, error = null) }
             try {
                 val amount = Money.fromDecimal(current.amountText)
+                val occurredAt =
+                    current.occurredAt?.toInstant(TimeZone.currentSystemDefault())?.toString()
+
                 transactionRepository.addDebt(
                     customerUuid = clientUuid,
-                    amount = amount,
-                    description = current.description.ifBlank { null }
+                    command = CreateDebtCommand(
+                        amountInCents = amount.cents(),
+                        description = current.description.ifBlank { null },
+                        occurredAt = occurredAt
+                    )
                 )
                 _state.update { it.copy(isSubmitting = false, isSubmitted = true) }
             } catch (e: Exception) {

@@ -48,6 +48,7 @@ data class AddDebtScreen(val customerUuid: String, val customer: Customer?) : Sc
                     state = state,
                     onAmountChange = viewModel::onAmountChange,
                     onDescriptionChange = viewModel::onDescriptionChange,
+                    onOccurredAtChange = viewModel::onOccurredAtChange,
                     onSubmit = viewModel::submit,
                     onCancel = { navigator.pop() },
                     customer = customer

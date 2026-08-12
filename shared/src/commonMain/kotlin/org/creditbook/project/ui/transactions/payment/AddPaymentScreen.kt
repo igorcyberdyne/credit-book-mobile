@@ -48,6 +48,7 @@ data class AddPaymentScreen(val customerUuid: String, val customer: Customer?) :
                     state = state,
                     onAmountChange = viewModel::onAmountChange,
                     onDescriptionChange = viewModel::onDescriptionChange,
+                    onOccurredAtChange = viewModel::onOccurredAtChange,
                     onPaymentMethodChange = viewModel::onPaymentMethodChange,
                     onPayFull = viewModel::payFull,
                     onSubmit = viewModel::submit,

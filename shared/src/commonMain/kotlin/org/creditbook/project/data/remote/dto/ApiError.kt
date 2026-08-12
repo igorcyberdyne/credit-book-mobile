@@ -1,8 +1,8 @@
 package org.creditbook.project.data.remote.dto
+
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.jsonPrimitive
 
 @Serializable
 data class ApiErrorData(
@@ -32,4 +32,8 @@ class ApiException(
     val code: String,
     override val message: String,
     val details: List<String> = emptyList()
-) : Exception(message)
+) : Exception(message) {
+    fun isBusinessException(): Boolean {
+        return code == "###"
+    }
+}

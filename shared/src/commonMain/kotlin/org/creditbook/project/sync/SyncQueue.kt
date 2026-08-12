@@ -11,7 +11,6 @@ class SyncQueue(
     private val sessionDatabase: SessionDatabase
 ) {
     fun startObserving(scope: CoroutineScope) {
-        println("************")
         scope.launch {
             connectivityObserver.observe().collect { isOnline ->
                 if (isOnline && sessionDatabase.hasSession()) {

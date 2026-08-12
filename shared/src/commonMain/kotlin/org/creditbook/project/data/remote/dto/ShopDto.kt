@@ -11,5 +11,5 @@ data class ShopDto(
     val city: String?,
     val country: String?,
     val phone: String?,
-    val currency: String
+    val currency: String?
 )

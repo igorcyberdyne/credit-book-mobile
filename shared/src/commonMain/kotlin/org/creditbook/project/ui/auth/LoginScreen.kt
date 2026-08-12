@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.creditbook.project.ui.customers.list.CustomerListScreen
 import org.creditbook.project.ui.main.MainScreen
 import org.creditbook.project.ui.onboarding.OnboardingScreen
 import org.koin.compose.viewmodel.koinViewModel

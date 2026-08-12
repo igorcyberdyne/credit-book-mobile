@@ -1,10 +1,13 @@
 package org.creditbook.project.data.repository
 
 import com.benasher44.uuid.uuid4
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import org.creditbook.project.data.local.SessionDatabase
 import org.creditbook.project.data.remote.dto.ApiException
 import org.creditbook.project.data.remote.dto.ApiResponse
@@ -12,15 +15,14 @@ import org.creditbook.project.data.remote.dto.CancelEntryCommand
 import org.creditbook.project.data.remote.dto.CorrectEntryCommand
 import org.creditbook.project.data.remote.dto.CreateDebtCommand
 import org.creditbook.project.data.remote.dto.CreatePaymentCommand
+import org.creditbook.project.data.remote.dto.TransactionCommand
 import org.creditbook.project.data.remote.dto.TransactionEntryDto
 import org.creditbook.project.data.remote.dto.TransactionsPageDto
-import org.creditbook.project.model.Money
 import org.creditbook.project.model.TransactionType
 import org.creditbook.project.model.TransactionsPage
 import org.creditbook.project.model.toDomain
 import org.creditbook.project.shared.db.AppDatabase
 import org.creditbook.project.sync.ConnectivityObserver
-import org.creditbook.project.ui.common.error.ErrorDialogState
 
 class TransactionRepository(
     private val httpClient: HttpClient,
@@ -36,25 +38,21 @@ class TransactionRepository(
         }
 
 
-    suspend fun addDebt(customerUuid: String, amount: Money, description: String? = null) {
+    suspend fun addDebt(customerUuid: String, command: CreateDebtCommand) {
         val localUuid: String = uuid4().toString()
 
         database.transactionQueries.insertEntry(
             localUuid = localUuid,
             customerUuid = customerUuid,
             type = TransactionType.DEBT.name,
-            amountInCents = amount.cents(),
-            description = description,
+            amountInCents = command.amountInCents,
+            description = command.description,
             paymentMethod = null,
-            occurredAt = null,
+            occurredAt = command.occurredAt,
             status = "pending",
             syncAttempts = 0,
             shopUuid = shopUuid,
         )
-
-        val allPending = database.transactionQueries.selectPending(shopUuid).executeAsList()
-        println("Après insertEntry, nombre de transactions pending: ${allPending.size}")
-        allPending.forEach { println("  -> ${it.localUuid} / ${it.amountInCents} centimes / status=${it.status}") }
 
         val online = connectivityObserver.isOnline()
 
@@ -63,9 +61,7 @@ class TransactionRepository(
 
     suspend fun addPayment(
         customerUuid: String,
-        amount: Money,
-        paymentMethod: String,
-        description: String? = null
+        command: CreatePaymentCommand
     ) {
         val localUuid: String = uuid4().toString()
 
@@ -73,10 +69,10 @@ class TransactionRepository(
             localUuid = localUuid,
             customerUuid = customerUuid,
             type = TransactionType.PAYMENT.name,
-            amountInCents = amount.cents(),
-            description = description,
-            paymentMethod = paymentMethod,
-            occurredAt = null,
+            amountInCents = command.amountInCents,
+            description = command.description,
+            paymentMethod = command.paymentMethod,
+            occurredAt = command.occurredAt,
             status = "pending",
             syncAttempts = 0,
             shopUuid
@@ -90,13 +86,11 @@ class TransactionRepository(
     // Route corrigée : /ledgers/{uuid}/correct
     suspend fun correctEntry(
         entryUuid: String,
-        amountInCents: Long,
-        description: String? = null,
-        paymentMethod: String? = null
+        command: CorrectEntryCommand
     ) {
         httpClient.post("/api/ledgers/$entryUuid/correct") {
             contentType(ContentType.Application.Json)
-            setBody(CorrectEntryCommand(amountInCents, description, paymentMethod))
+            setBody(command)
         }
     }
 
@@ -118,36 +112,44 @@ class TransactionRepository(
 
         for (entry in pending) {
             try {
-                // Routes corrigées : /ledgers/customers/{uuid}/debts et /payments
-                val response = if (entry.type == "DEBT") {
-                    httpClient.post("/api/ledgers/customers/${entry.customerUuid}/debts") {
-                        contentType(ContentType.Application.Json)
-                        setBody(
-                            CreateDebtCommand(
-                                amountInCents = entry.amountInCents,
-                                description = entry.description,
-                                occurredAt = null
-                            )
-                        )
-                    }
+                var resource: String
+                var command: TransactionCommand
+
+                if (entry.type == "DEBT") {
+                    resource = "debts"
+                    command = CreateDebtCommand(
+                        amountInCents = entry.amountInCents,
+                        description = entry.description,
+                        occurredAt = entry.occurredAt
+                    )
                 } else {
-                    httpClient.post("/api/ledgers/customers/${entry.customerUuid}/payments") {
+                    resource = "payments"
+                    command = CreatePaymentCommand(
+                        amountInCents = entry.amountInCents,
+                        paymentMethod = entry.paymentMethod ?: "CASH",
+                        description = entry.description,
+                        occurredAt = entry.occurredAt
+                    )
+                }
+
+                val response =
+                    httpClient.post("/api/ledgers/customers/${entry.customerUuid}/$resource") {
                         contentType(ContentType.Application.Json)
-                        setBody(
-                            CreatePaymentCommand(
-                                amountInCents = entry.amountInCents,
-                                paymentMethod = entry.paymentMethod ?: "CASH",
-                                description = entry.description,
-                                occurredAt = null
-                            )
-                        )
-                    }
-                }.body<ApiResponse<TransactionEntryDto>>().data
+                        setBody(command)
+                    }.body<ApiResponse<TransactionEntryDto>>().data
 
                 database.transactionQueries.markSynced(response.uuid, entry.id)
             } catch (e: ApiException) {
-                if (e.code == "###" && isUserAction && localUuid != null && entry.localUuid == localUuid) {
+                if (isUserAction && localUuid != null && entry.localUuid == localUuid) {
                     database.transactionQueries.delete(localUuid)
+
+                    if (!e.isBusinessException()) {
+                        throw ApiException(
+                            code = e.code,
+                            message = "Impossible d’enregistrer l’opération pour le moment. Veuillez réessayer ultérieurement.",
+                            details = e.details
+                        )
+                    }
 
                     throw e
                 }
