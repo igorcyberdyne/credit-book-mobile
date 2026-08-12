@@ -12,6 +12,7 @@ import org.creditbook.project.data.remote.dto.ApiResponse
 import org.creditbook.project.data.remote.dto.LoginCommand
 import org.creditbook.project.data.remote.dto.LoginResponse
 import org.creditbook.project.data.remote.dto.OnboardingCommand
+import org.creditbook.project.model.CurrentCurrency
 import org.creditbook.project.model.Session
 import org.creditbook.project.model.User
 import org.creditbook.project.model.toDomain
@@ -28,7 +29,6 @@ class AuthRepository(
         }.body<ApiResponse<LoginResponse>>().data
 
         tokenStorage.saveTokens(response.token, response.refreshToken, response.expiresIn)
-
         sessionDatabase.saveSession(response)
 
         return response.user.toDomain()
@@ -41,7 +41,6 @@ class AuthRepository(
         }.body<ApiResponse<LoginResponse>>().data
 
         tokenStorage.saveTokens(response.token, response.refreshToken, response.expiresIn)
-
         sessionDatabase.saveSession(response)
 
         return response.user.toDomain()
@@ -52,8 +51,13 @@ class AuthRepository(
     }
 
     fun logout() {
-        sessionDatabase.clearSession()
-        tokenStorage.clearTokens()
+        try {
+            sessionDatabase.clearSession()
+            tokenStorage.clearTokens()
+            CurrentCurrency.reset()
+        } catch (_: Exception) {
+
+        }
     }
 
     suspend fun isLoggedIn(): Boolean {

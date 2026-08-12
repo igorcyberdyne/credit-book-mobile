@@ -31,7 +31,7 @@ data class Shop(
                 fullAddress += (if (fullAddress.isNotEmpty()) ", " else "") + postalCode.trim()
             }
 
-            return fullAddress
+            return fullAddress.trim()
         }
 }
 

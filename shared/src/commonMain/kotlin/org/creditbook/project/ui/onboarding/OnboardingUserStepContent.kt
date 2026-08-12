@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import org.creditbook.project.ui.common.LimitedTextField
 
 @Composable
 fun OnboardingUserStepContent(
@@ -46,41 +47,46 @@ fun OnboardingUserStepContent(
         Text("Créez votre compte", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.firstname, onValueChange = onFirstnameChange,
-            label = { Text("Prénom") }, singleLine = true,
+            label = "Prénom", singleLine = true,
+            maxLength = 100,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.lastname, onValueChange = onLastnameChange,
-            label = { Text("Nom (optionnel)") }, singleLine = true,
+            label = "Nom (optionnel)", singleLine = true,
+            maxLength = 100,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.email, onValueChange = onEmailChange,
-            label = { Text("Email") }, singleLine = true,
+            label = "Email", singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            maxLength = 100,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.phone, onValueChange = onPhoneChange,
-            label = { Text("Téléphone") }, singleLine = true,
+            label = "Téléphone", singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            maxLength = 20,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.password, onValueChange = onPasswordChange,
-            label = { Text("Mot de passe") }, singleLine = true,
+            label = "Mot de passe", singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            maxLength = 16,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))

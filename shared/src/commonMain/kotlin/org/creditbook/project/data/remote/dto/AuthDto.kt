@@ -21,6 +21,7 @@ data class UserDto(
     val email: String,
     val firstName: String,
     val lastName: String?,
+    val phone: String?,
     val roles: List<String>
 )
 

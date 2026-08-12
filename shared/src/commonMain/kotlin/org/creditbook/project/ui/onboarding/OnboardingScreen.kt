@@ -15,14 +15,17 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.benasher44.uuid.uuid4
 import org.creditbook.project.ui.main.MainScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 object OnboardingScreen : Screen {
+    private val screenKey = uuid4().toString()
+
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = koinViewModel<OnboardingViewModel>()
+        val viewModel = koinViewModel<OnboardingViewModel>(key = screenKey)
         val state by viewModel.state.collectAsState()
 
         LaunchedEffect(state.isCompleted) {

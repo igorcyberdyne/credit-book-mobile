@@ -4,6 +4,7 @@ CREATE TABLE SessionInfo (
     email TEXT NOT NULL,
     firstName TEXT NOT NULL,
     lastName TEXT,
+    phone TEXT,
     roles TEXT NOT NULL,           -- rôles concaténés séparés par une virgule
     shopUuid TEXT NOT NULL,
     shopName TEXT NOT NULL,
@@ -20,10 +21,10 @@ SELECT * FROM SessionInfo WHERE id = 0;
 
 insertOrReplaceSession:
 INSERT OR REPLACE INTO SessionInfo(
-    id, userUuid, email, firstName, lastName, roles,
+    id, userUuid, email, firstName, lastName, phone, roles,
     shopUuid, shopName, shopAddress, shopPostalCode, shopCity, shopCountry, shopPhone, shopCurrency
 )
-VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 clearSession:
 DELETE FROM SessionInfo WHERE id = 0;

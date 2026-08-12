@@ -13,12 +13,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.creditbook.project.data.repository.AuthRepository
 import org.creditbook.project.di.AuthEvents
+import org.creditbook.project.model.CurrentCurrency
 import org.koin.compose.koinInject
 
 @Composable
@@ -28,16 +28,24 @@ fun ProfileScreen() {
     val session = remember { authRepository.getCachedSession() }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Profil") }) }
+        topBar = { TopAppBar(title = { Text("Votre profil") }) }
     ) { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             session.let {
-                Text(it.user.displayName)
-                Text(it.shop.name)
-                Text(it.shop.displayAddress)
+                Text("Nom complet : " + it.user.displayName)
+                Text("Email : " + it.user.email)
+                Text("Role : " + it.user.roleName)
+                Text("Phone : " + it.user.phone?.isEmpty().let { "---" })
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text("Enseigne : " + it.shop.name)
+                Text("Phone : " + it.shop.phone?.isEmpty().let { "---" })
+                Text("Adresse : " + it.shop.displayAddress.isEmpty().let { "---" })
+                Text("Pays : " + it.shop.country?.isEmpty().let { "---" })
+                Text("Devise : " + CurrentCurrency.value.symbol)
             }
 
             Spacer(modifier = Modifier.height(24.dp))

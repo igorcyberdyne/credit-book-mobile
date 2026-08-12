@@ -7,15 +7,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import org.creditbook.project.ui.common.LimitedTextField
 
 @Composable
 fun EditCustomerContent(
@@ -27,48 +29,58 @@ fun EditCustomerContent(
     onNoteChange: (String) -> Unit,
     onSubmit: () -> Unit
 ) {
-    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
-
-        OutlinedTextField(
+    Column(
+        modifier = modifier.fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+    ) {
+        LimitedTextField(
             value = state.firstname,
             onValueChange = onFirstnameChange,
-            label = { Text("Prénom") },
+            label = "Prénom",
             singleLine = true,
             keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words
             ),
+            maxLength = 100,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.lastname,
             onValueChange = onLastnameChange,
-            label = { Text("Nom (optionnel)") },
+            label = "Nom (optionnel)",
             singleLine = true,
+            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                capitalization = KeyboardCapitalization.Words
+            ),
+            maxLength = 100,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.phone,
             onValueChange = onPhoneChange,
-            label = { Text("Téléphone (optionnel)") },
+            label = "Téléphone (optionnel)",
             singleLine = true,
             keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                 keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone
             ),
+            maxLength = 20,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        LimitedTextField(
             value = state.note,
             onValueChange = onNoteChange,
-            label = { Text("Note (optionnel)") },
+            label = "Description (optionnel)",
+            maxLength = 255,
             modifier = Modifier.fillMaxWidth()
         )
 

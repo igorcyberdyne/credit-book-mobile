@@ -17,6 +17,7 @@ import org.creditbook.project.data.local.SessionDatabase
 import org.creditbook.project.data.repository.AuthRepository
 import org.creditbook.project.data.repository.TransactionRepository
 import org.creditbook.project.di.AuthEvents
+import org.creditbook.project.model.CurrentCurrency
 import org.creditbook.project.sync.ConnectivityObserver
 import org.creditbook.project.ui.auth.LoginScreen
 import org.creditbook.project.ui.common.error.ErrorDialog
@@ -34,6 +35,10 @@ fun AppEntryPoint() {
     var isLoggedIn by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        if (sessionDatabase.hasSession()) {
+            authRepository.getCachedSession().shop.currency?.let { CurrentCurrency.set(it) }
+        }
+
         isLoggedIn = authRepository.isLoggedIn()
         isCheckingAuth = false
     }

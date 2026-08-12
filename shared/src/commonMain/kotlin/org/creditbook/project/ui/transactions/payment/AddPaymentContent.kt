@@ -28,7 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
+import org.creditbook.project.model.CurrentCurrency
 import org.creditbook.project.model.Customer
+import org.creditbook.project.ui.common.LimitedTextField
 import org.creditbook.project.ui.common.OccurredAtPicker
 import org.creditbook.project.ui.customers.CustomerHeaderContent
 
@@ -83,7 +85,7 @@ fun AddPaymentContent(
             OutlinedTextField(
                 value = state.amountText,
                 onValueChange = onAmountChange,
-                label = { Text("Montant reçu (€)") },
+                label = { Text("Montant reçu (" + CurrentCurrency.value.symbol + ")") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 isError = state.error != null,
                 singleLine = true,
@@ -122,10 +124,11 @@ fun AddPaymentContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
+            LimitedTextField(
                 value = state.description,
                 onValueChange = onDescriptionChange,
-                label = { Text("Description (optionnel)") },
+                label = "Description (optionnel)",
+                maxLength = 255,
                 modifier = Modifier.fillMaxWidth()
             )
 

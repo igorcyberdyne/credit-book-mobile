@@ -2,26 +2,31 @@ package org.creditbook.project.model
 
 import kotlin.math.roundToLong
 
-enum class Currency(val symbol: String) {
-    EURO("€"),
-    USD("$"),
-    CD("FC"),
-    XOF("CFA"),
-    XAF("FCFA"),
-    Currency("D")
+enum class Currency(val code: String, val symbol: String) {
+    EURO("EURO", "€"),
+    USD("USD", "$"),
+    CD("CD", "FC"),
+    XOF("XOF", "CFA"),
+    XAF("XAF", "FCFA"),
+    UNDEFINED("UNDEFINED", "UND");
+
+    companion object {
+        fun fromCode(code: String): Currency =
+            entries.firstOrNull { it.code == code } ?: UNDEFINED
+    }
 }
 
 data class Money private constructor(
     val amountInCents: Long,
-    val currency: Currency = Currency.EURO
+    val currency: Currency = CurrentCurrency.value
 ) {
     companion object {
-        fun fromCents(amountInCents: Long, currency: Currency = Currency.EURO): Money =
+        fun fromCents(amountInCents: Long, currency: Currency = CurrentCurrency.value): Money =
             Money(amountInCents, currency)
 
         // Équivalent de Money::fromDecimal côté PHP : parse une chaîne décimale ("10.00")
         // en centimes, sans passer par un Double brut pour le calcul final (arrondi explicite).
-        fun fromDecimal(amount: String, currency: Currency = Currency.EURO): Money {
+        fun fromDecimal(amount: String, currency: Currency = CurrentCurrency.value): Money {
             val cents = (amount.toDouble() * 100).roundToLong()
             return Money(cents, currency)
         }
